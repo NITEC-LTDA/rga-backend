@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateTutorDto } from './dto/create-tutor.dto'
 import { UpdateTutorDto } from './dto/update-tutor.dto'
 import { Tutor } from './entities/tutor.entity'
-import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { TutorsMapper } from 'src/infra/database/prisma/mappers/tutors-mapper'
+import { PrismaService } from '@/infra/database/prisma/prisma.service'
+import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors-mapper'
 
 @Injectable()
 export class TutorsService {
@@ -15,9 +15,11 @@ export class TutorsService {
     try {
       const prismaTutor = TutorsMapper.toPrisma(tutor)
 
-      await this.prismaService.tutor.create({
-        data: prismaTutor,
-      })
+      return TutorsMapper.toHttp(
+        await this.prismaService.tutor.create({
+          data: prismaTutor,
+        }),
+      )
     } catch (error) {
       throw new Error(error)
     }

@@ -11,7 +11,7 @@ import {
 import { TutorsService } from './tutors.service'
 import { CreateTutorDto } from './dto/create-tutor.dto'
 import { UpdateTutorDto } from './dto/update-tutor.dto'
-import { TutorsMapper } from 'src/infra/database/prisma/mappers/tutors-mapper'
+import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors-mapper'
 @Controller('tutors')
 export class TutorsController {
   constructor(private readonly tutorsService: TutorsService) {}

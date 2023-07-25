@@ -1,5 +1,5 @@
 import { Tutor as RawTutor } from '@prisma/client'
-import { Tutor } from 'src/app/tutors/entities/tutor.entity'
+import { Tutor } from '@/app/tutors/entities/tutor.entity'
 
 export class TutorsMapper {
   static toHttp(raw: RawTutor) {

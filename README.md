@@ -16,6 +16,14 @@ docker-compose up
 
 ## Migration
 
+### Run
+
+```bash
+docker-compose exec api npx prisma migrate dev --preview-feature
+```
+
+### Create
+
 ```bash
 docker-compose exec api npx prisma migrate dev --name "tutors and tutors_addresses"
 

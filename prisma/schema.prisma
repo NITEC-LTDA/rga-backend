@@ -6,13 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Tutor {
-  id                 String          @id @default(cuid())
+  id                 String          @id @default(uuid())
   name               String?
   cpf                String          @unique
   email              String          @unique
@@ -26,7 +25,7 @@ model Tutor {
 }
 
 model Tutor_Address {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   tutor_id   String
   street     String
   number     String
