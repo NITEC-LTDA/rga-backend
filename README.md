@@ -32,14 +32,7 @@ docker-compose exec api npx prisma migrate dev --name "tutors and tutors_address
 ## Test
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose exec api npm run test:e2e
 ```
 
 ## License
