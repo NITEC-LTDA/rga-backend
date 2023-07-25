@@ -8,13 +8,11 @@ import { TutorAddressesModule } from '@/app/tutor_addresses/tutor_addresses.modu
 import { TutorsModule } from '@/app/tutors/tutors.module'
 import { execSync } from 'child_process'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
-import { randomUUID } from 'crypto'
 import { TutorsService } from '@/app/tutors/tutors.service'
 
 describe('TutorsController (e2e)', () => {
   let app: INestApplication
   let prisma: PrismaService
-  const tutorId = randomUUID()
 
   beforeAll(async () => {
     prisma = new PrismaService(process.env.TEST_DATABASE_URL)
@@ -78,6 +76,6 @@ describe('TutorsController (e2e)', () => {
       .get(`/tutors/${tutor.id}`)
       .expect(200)
 
-    expect(response.body.id).toBe(tutorId)
+    expect(response.body.id).toBe(tutor.id)
   })
 })
