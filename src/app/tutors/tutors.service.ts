@@ -15,16 +15,16 @@ export class TutorsService {
     const prismaTutor = TutorsMapper.toPrisma(tutor)
 
     return TutorsMapper.toHttp(
-      await this.prismaService.tutor.create({
+      await this.prismaService.tutors.create({
         data: prismaTutor,
       }),
     )
   }
 
   async findOne(id: string) {
-    const prismaTutor = await this.prismaService.tutor.findUnique({
+    const prismaTutor = await this.prismaService.tutors.findUnique({
       where: { id },
-      include: { Tutor_Address: true },
+      include: { Tutor_Addresses: true },
     })
     return prismaTutor
   }
@@ -33,21 +33,21 @@ export class TutorsService {
     const tutor = await this.findOne(id)
     const updatedTutor = { ...tutor, ...updateTutorDto }
 
-    return this.prismaService.tutor.update({
+    return this.prismaService.tutors.update({
       where: { id },
       data: TutorsMapper.toPrisma(new Tutor(updatedTutor)),
     })
   }
 
   async remove(id: string) {
-    return this.prismaService.tutor.delete({ where: { id } })
+    return this.prismaService.tutors.delete({ where: { id } })
   }
 
   async findByEmail(email: string) {
-    return this.prismaService.tutor.findUnique({ where: { email } })
+    return this.prismaService.tutors.findUnique({ where: { email } })
   }
 
   async findByCpf(cpf: string) {
-    return this.prismaService.tutor.findUnique({ where: { cpf } })
+    return this.prismaService.tutors.findUnique({ where: { cpf } })
   }
 }

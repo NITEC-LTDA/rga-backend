@@ -1,19 +1,19 @@
 import {
-  Tutor as RawTutor,
-  Tutor_Address as RawTutorAddresses,
+  Tutors as RawTutor,
+  Tutor_Addresses as RawTutorAddresses,
 } from '@prisma/client'
 import { Tutor } from '@/app/tutors/entities/tutor.entity'
 
 export class TutorsMapper {
-  static toHttp(raw: RawTutor & { Tutor_Address?: RawTutorAddresses[] }) {
-    if (raw.Tutor_Address && raw.Tutor_Address.length > 0) {
+  static toHttp(raw: RawTutor & { Tutor_Addresses?: RawTutorAddresses[] }) {
+    if (raw.Tutor_Addresses && raw.Tutor_Addresses.length > 0) {
       return {
         id: raw.id,
         name: raw.name,
         email: raw.email,
         cpf: raw.cpf,
-        primaryAddressId: raw.primary_address_id,
-        addresses: raw.Tutor_Address.map((address) => ({
+        primaryAddressId: raw.primaryAddressId,
+        addresses: raw.Tutor_Addresses.map((address) => ({
           id: address.id,
           street: address.street,
           number: address.number,
@@ -36,7 +36,7 @@ export class TutorsMapper {
       name: raw.name,
       email: raw.email,
       cpf: raw.cpf,
-      primaryAddressId: raw.primary_address_id,
+      primaryAddressId: raw.primaryAddressId,
       addresses: [],
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,

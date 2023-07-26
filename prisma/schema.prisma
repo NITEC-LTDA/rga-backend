@@ -11,21 +11,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Tutor {
-  id                 String          @id @default(uuid())
-  name               String?
-  cpf                String          @unique
-  email              String          @unique
-  password           String
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-  primary_address_id String?
-  Tutor_Address      Tutor_Address[]
+model Tutors {
+  id               String            @id @default(uuid())
+  name             String?
+  cpf              String            @unique
+  email            String            @unique
+  password         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  primaryAddressId String?
+  Tutor_Addresses  Tutor_Addresses[]
 
+  @@index([primaryAddressId], name: "primaryAddressId")
+  @@index([cpf], name: "cpf")
   @@map("tutors")
 }
 
-model Tutor_Address {
+model Tutor_Addresses {
   id           String   @id @default(uuid())
   tutor_id     String
   street       String
@@ -37,7 +39,8 @@ model Tutor_Address {
   neighborhood String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  tutor        Tutor    @relation(fields: [tutor_id], references: [id])
+  tutor        Tutors   @relation(fields: [tutor_id], references: [id])
 
+  @@index([tutor_id], name: "tutor_id")
   @@map("tutor_addresses")
 }
