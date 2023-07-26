@@ -55,11 +55,17 @@ export class TutorsController {
       throw new NotFoundException('Tutor not found')
     }
 
-    if (await this.tutorsService.findByEmail(updateTutorDto.email)) {
+    if (
+      (await this.tutorsService.findByEmail(updateTutorDto.email)) &&
+      updateTutorDto.email !== tutorExists.email
+    ) {
       throw new AlreadyExistsException('Email already in use')
     }
 
-    if (await this.tutorsService.findByCpf(updateTutorDto.cpf)) {
+    if (
+      (await this.tutorsService.findByCpf(updateTutorDto.cpf)) &&
+      updateTutorDto.cpf !== tutorExists.cpf
+    ) {
       throw new AlreadyExistsException('CPF already in use')
     }
 

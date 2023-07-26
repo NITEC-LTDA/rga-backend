@@ -28,8 +28,8 @@ export class TutorsService {
   async findOne(id: string) {
     const prismaTutor = await this.prismaService.tutor.findUnique({
       where: { id },
+      include: { Tutor_Address: true },
     })
-
     return prismaTutor
   }
 
@@ -39,7 +39,7 @@ export class TutorsService {
 
     return this.prismaService.tutor.update({
       where: { id },
-      data: updatedTutor,
+      data: TutorsMapper.toPrisma(new Tutor(updatedTutor)),
     })
   }
 
