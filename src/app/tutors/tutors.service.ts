@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateTutorDto } from './dto/create-tutor.dto'
 import { UpdateTutorDto } from './dto/update-tutor.dto'
 import { Tutor } from './entities/tutor.entity'
