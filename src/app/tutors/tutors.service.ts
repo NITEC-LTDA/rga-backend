@@ -12,17 +12,13 @@ export class TutorsService {
   async create(createTutorDto: CreateTutorDto) {
     const tutor = new Tutor(createTutorDto)
 
-    try {
-      const prismaTutor = TutorsMapper.toPrisma(tutor)
+    const prismaTutor = TutorsMapper.toPrisma(tutor)
 
-      return TutorsMapper.toHttp(
-        await this.prismaService.tutor.create({
-          data: prismaTutor,
-        }),
-      )
-    } catch (error) {
-      throw new Error(error)
-    }
+    return TutorsMapper.toHttp(
+      await this.prismaService.tutor.create({
+        data: prismaTutor,
+      }),
+    )
   }
 
   async findOne(id: string) {
