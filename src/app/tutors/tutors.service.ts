@@ -30,16 +30,28 @@ export class TutorsService {
       where: { id },
     })
 
-    if (!prismaTutor) throw new NotFoundException()
-
     return prismaTutor
   }
 
-  update(id: number, updateTutorDto: UpdateTutorDto) {
-    return `This action updates a #${id} tutor`
+  async update(id: string, updateTutorDto: UpdateTutorDto) {
+    const tutor = await this.findOne(id)
+    const updatedTutor = { ...tutor, ...updateTutorDto }
+
+    return this.prismaService.tutor.update({
+      where: { id },
+      data: updatedTutor,
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tutor`
+  async remove(id: string) {
+    return this.prismaService.tutor.delete({ where: { id } })
+  }
+
+  async findByEmail(email: string) {
+    return this.prismaService.tutor.findUnique({ where: { email } })
+  }
+
+  async findByCpf(cpf: string) {
+    return this.prismaService.tutor.findUnique({ where: { cpf } })
   }
 }
