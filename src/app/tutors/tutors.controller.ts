@@ -13,7 +13,7 @@ import {
 import { TutorsService } from './tutors.service'
 import { CreateTutorDto } from './dto/create-tutor.dto'
 import { UpdateTutorDto } from './dto/update-tutor.dto'
-import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors-mapper'
+import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors.mapper'
 import { AlreadyExistsException } from '../exceptions/already-exists.exception'
 @Controller('tutors')
 export class TutorsController {

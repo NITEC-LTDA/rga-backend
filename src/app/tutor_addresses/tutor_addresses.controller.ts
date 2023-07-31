@@ -6,18 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
 } from '@nestjs/common'
 import { TutorAddressesService } from './tutor_addresses.service'
 import { CreateTutorAddressDto } from './dto/create-tutor_address.dto'
 import { UpdateTutorAddressDto } from './dto/update-tutor_address.dto'
+import { TutorsAddressesMapper } from '@/infra/database/prisma/mappers/tutors_addresses.mapper'
 
 @Controller('tutor-addresses')
 export class TutorAddressesController {
   constructor(private readonly tutorAddressesService: TutorAddressesService) {}
 
   @Post()
-  create(@Body() createTutorAddressDto: CreateTutorAddressDto) {
-    return this.tutorAddressesService.create(createTutorAddressDto)
+  @HttpCode(201)
+  async create(@Body() createTutorAddressDto: CreateTutorAddressDto) {
+    const address = await this.tutorAddressesService.create(
+      createTutorAddressDto,
+    )
+
+    return TutorsAddressesMapper.toHttp(address)
   }
 
   @Get()

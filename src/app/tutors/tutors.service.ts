@@ -3,7 +3,7 @@ import { CreateTutorDto } from './dto/create-tutor.dto'
 import { UpdateTutorDto } from './dto/update-tutor.dto'
 import { Tutor } from './entities/tutor.entity'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
-import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors-mapper'
+import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors.mapper'
 
 @Injectable()
 export class TutorsService {
