@@ -14,11 +14,14 @@ import { TutorsService } from './tutors.service'
 import { CreateTutorDto } from './dto/create-tutor.dto'
 import { UpdateTutorDto } from './dto/update-tutor.dto'
 import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors.mapper'
-import { AlreadyExistsException } from '../exceptions/already-exists.exception'
+import { AlreadyExistsException } from '../../commons/exceptions/already-exists.exception'
+import { Public } from '@/commons/decorators/public.decorator'
+
 @Controller('tutors')
 export class TutorsController {
   constructor(private readonly tutorsService: TutorsService) {}
 
+  @Public()
   @Post()
   @HttpCode(201)
   async create(@Body() createTutorDto: CreateTutorDto) {
