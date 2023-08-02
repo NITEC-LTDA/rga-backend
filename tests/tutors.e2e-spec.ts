@@ -8,7 +8,9 @@ import { TutorAddressesModule } from '@/app/tutor_addresses/tutor_addresses.modu
 import { TutorsModule } from '@/app/tutors/tutors.module'
 import { execSync } from 'child_process'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
-import { TutorsService } from '@/app/tutors/tutors.service'
+import { AuthModule } from '@/app/auth/auth.module'
+import { AtGuard } from '@/commons/guards/at.guard'
+import { APP_GUARD } from '@nestjs/core'
 
 describe('TutorsController (e2e)', () => {
   let app: INestApplication
@@ -23,7 +25,19 @@ describe('TutorsController (e2e)', () => {
     })
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot(), TutorsModule, TutorAddressesModule],
+      imports: [
+        ConfigModule.forRoot(),
+        AuthModule,
+        TutorsModule,
+        TutorAddressesModule,
+      ],
+      controllers: [],
+      providers: [
+        {
+          provide: APP_GUARD,
+          useClass: AtGuard,
+        },
+      ],
     })
       .overrideProvider(ConfigService) // Override ConfigService
       .useValue({
@@ -57,25 +71,49 @@ describe('TutorsController (e2e)', () => {
       .send({
         name: 'John Doe',
         email: 'john@gmail.com',
-        password: '123456',
+        password: '123456789',
         cpf: '123.456.789-10',
       })
       .expect(201)
   })
 
   it('/ (GET)', async () => {
-    const tutorsService = new TutorsService(prisma)
-    const tutor = await tutorsService.create({
-      name: 'John Doe',
-      email: 'john2@gmail.com',
-      password: '123456',
-      cpf: '488.232.557-83',
-    })
+    const { body } = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        cpf: '123.456.789-10',
+        password: '123456789',
+      })
+
+    const { accessToken } = body
 
     const response = await request(app.getHttpServer())
-      .get(`/tutors/${tutor.id}`)
+      .get(`/tutors/me`)
+      .auth(accessToken, { type: 'bearer' })
       .expect(200)
 
-    expect(response.body.id).toBe(tutor.id)
+    expect(response.body.cpf).toBe('123.456.789-10')
+  })
+
+  it('/ (PATCH)', async () => {
+    const { body } = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        cpf: '123.456.789-10',
+        password: '123456789',
+      })
+
+    const { accessToken } = body
+
+    const response = await request(app.getHttpServer())
+      .patch(`/tutors/me`)
+      .auth(accessToken, { type: 'bearer' })
+      .send({
+        name: 'John Doe',
+        email: 'john234@gmail.com',
+        cpf: '123.456.789-10',
+      })
+
+    expect(response.body.email).toBe('john234@gmail.com')
   })
 })
