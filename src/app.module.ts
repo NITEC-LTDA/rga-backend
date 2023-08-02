@@ -5,6 +5,7 @@ import { TutorsModule } from './app/tutors/tutors.module'
 import { AuthModule } from './app/auth/auth.module'
 import { APP_GUARD } from '@nestjs/core'
 import { AtGuard } from './commons/guards/at.guard'
+import { PetsModule } from './app/pets/pets.module'
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AtGuard } from './commons/guards/at.guard'
     AuthModule,
     TutorsModule,
     TutorAddressesModule,
+    PetsModule,
   ],
   controllers: [],
   providers: [
