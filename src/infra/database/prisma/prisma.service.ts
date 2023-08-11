@@ -7,8 +7,17 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor(private readonly connectionUrl?: string) {
     super(
       connectionUrl
-        ? { datasources: { db: { url: connectionUrl } } }
-        : undefined,
+        ? {
+            datasources: { db: { url: connectionUrl } },
+            ...(process.env.NODE_ENV === 'dev'
+              ? { log: ['query', 'info', 'warn'] }
+              : {}),
+          }
+        : {
+            ...(process.env.NODE_ENV === 'dev'
+              ? { log: ['query', 'info', 'warn'] }
+              : {}),
+          },
     )
   }
 

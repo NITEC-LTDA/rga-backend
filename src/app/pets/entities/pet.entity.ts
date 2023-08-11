@@ -6,7 +6,7 @@ interface PetsProps {
   species: string
   breed: string
   birthDate: Date
-  gender: string
+  gender: 'Male' | 'Female'
   color: string
   microchip: string
   imageUrl: string
@@ -15,6 +15,7 @@ interface PetsProps {
   createdAt?: Date
   updatedAt?: Date
 }
+
 export class Pet {
   private props: PetsProps
   private _id: string
@@ -58,15 +59,15 @@ export class Pet {
     return this.props.birthDate
   }
 
-  public set birthDate(birdthdate: Date) {
-    this.props.birthDate = birdthdate
+  public set birthDate(birthDate: Date) {
+    this.props.birthDate = birthDate
   }
 
   public get gender() {
     return this.props.gender
   }
 
-  public set gender(gender: string) {
+  public set gender(gender: 'Male' | 'Female') {
     this.props.gender = gender
   }
 

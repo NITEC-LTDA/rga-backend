@@ -55,7 +55,7 @@ model Pets {
   birthdate DateTime
   gender    String   @db.VarChar(10)
   color     String   @db.VarChar(20)
-  microchip String
+  microchip String   @unique
   image_url String
   rga       String
   tutorId   String?
@@ -65,5 +65,7 @@ model Pets {
   Tutors Tutors? @relation(fields: [tutorId], references: [id])
 
   @@index([tutorId], name: "pets_tutor_id")
+  @@index([microchip], name: "pets_microchip")
+  @@index([rga], name: "pets_rga")
   @@map("pets")
 }
