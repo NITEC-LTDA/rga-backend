@@ -55,7 +55,7 @@ model Pets {
   birthdate DateTime
   gender    String   @db.VarChar(10)
   color     String   @db.VarChar(20)
-  microchip String   @unique
+  microchip String?
   image_url String
   rga       String
   tutorId   String?

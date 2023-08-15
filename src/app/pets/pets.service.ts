@@ -2,17 +2,26 @@ import { Injectable } from '@nestjs/common'
 import { CreatePetDto } from './dto/create-pet.dto'
 import { UpdatePetDto } from './dto/update-pet.dto'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
+import { Pet } from './entities/pet.entity'
+import { generateRga } from '../utils'
+import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
 
 @Injectable()
 export class PetsService {
   constructor(private prismaService: PrismaService) {}
 
-  create(createPetDto: CreatePetDto) {
-    return 'This action adds a new pet'
+  async create(createPetDto: CreatePetDto, tutorId: string) {
+    const rga = generateRga(9)
+    const pet = new Pet(createPetDto, tutorId, rga)
+    const prismaPet = PetsMapper.toPrisma(pet)
+    return this.prismaService.pets.create({ data: prismaPet })
   }
 
-  findAll() {
-    return `This action returns all pets`
+  async findAll(tutorId: string) {
+    const pets = await this.prismaService.pets.findMany({
+      where: { tutorId },
+    })
+    return pets
   }
 
   findOne(id: number) {
@@ -28,7 +37,7 @@ export class PetsService {
   }
 
   async findByMicrochip(microchip: string) {
-    return this.prismaService.pets.findUnique({
+    return this.prismaService.pets.findFirst({
       where: { microchip },
     })
   }

@@ -29,6 +29,5 @@ export class CreatePetDto {
   @IsString()
   imageUrl: string
 
-  @IsString()
   microchip?: string
 }

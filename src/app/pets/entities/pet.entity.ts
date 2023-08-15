@@ -8,10 +8,10 @@ interface PetsProps {
   birthDate: Date
   gender: 'Male' | 'Female'
   color: string
-  microchip: string
+  rga?: string
+  microchip?: string
   imageUrl: string
-  rga: string
-  tutorId: string
+  tutorId?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -20,10 +20,14 @@ export class Pet {
   private props: PetsProps
   private _id: string
 
-  constructor(props: PetsProps, id?: string) {
+  constructor(props: PetsProps, tutorId: string, rga: string, id?: string) {
     this.props = {
       ...props,
       id: id ?? randomUUID(),
+      tutorId,
+      rga,
+      createdAt: props.createdAt ?? new Date(),
+      updatedAt: props.updatedAt ?? new Date(),
     }
   }
 

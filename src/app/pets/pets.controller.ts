@@ -12,6 +12,8 @@ import { PetsService } from './pets.service'
 import { CreatePetDto } from './dto/create-pet.dto'
 import { UpdatePetDto } from './dto/update-pet.dto'
 import { AlreadyExistsException } from '@/commons/exceptions/already-exists.exception'
+import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
+import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
 
 @Controller('pets')
 export class PetsController {
@@ -19,19 +21,25 @@ export class PetsController {
 
   @Post()
   @HttpCode(201)
-  async create(@Body() createPetDto: CreatePetDto) {
+  async create(
+    @GetCurrentUserId() currentUserId: string,
+    @Body() createPetDto: CreatePetDto,
+  ) {
     if (
       createPetDto.microchip &&
       (await this.petsService.findByMicrochip(createPetDto.microchip))
     ) {
       throw new AlreadyExistsException('Microchip already in use')
     }
-    return this.petsService.create(createPetDto)
+
+    const prismaPet = await this.petsService.create(createPetDto, currentUserId)
+    return PetsMapper.toHttp(prismaPet)
   }
 
   @Get()
-  findAll() {
-    return this.petsService.findAll()
+  async findAll(@GetCurrentUserId() currentUserId: string) {
+    const prismaPets = await this.petsService.findAll(currentUserId)
+    return prismaPets.map((pet) => PetsMapper.toHttp(pet))
   }
 
   @Get(':id')
