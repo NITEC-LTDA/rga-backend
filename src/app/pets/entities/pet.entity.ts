@@ -6,7 +6,7 @@ interface PetsProps {
   species: string
   breed: string
   birthDate: Date
-  gender: 'Male' | 'Female'
+  gender: string
   color: string
   rga?: string
   microchip?: string
@@ -71,7 +71,7 @@ export class Pet {
     return this.props.gender
   }
 
-  public set gender(gender: 'Male' | 'Female') {
+  public set gender(gender: string) {
     this.props.gender = gender
   }
 

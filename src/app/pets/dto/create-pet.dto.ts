@@ -19,8 +19,8 @@ export class CreatePetDto {
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(10)
-  gender: 'Male' | 'Female'
+  @MaxLength(6)
+  gender: string
 
   @IsString()
   @MaxLength(10)

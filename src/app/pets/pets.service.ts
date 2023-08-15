@@ -24,12 +24,14 @@ export class PetsService {
     return pets
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pet`
-  }
+  async update(rga: string, tutorId: string, updatePetDto: UpdatePetDto) {
+    const pet = await this.findByRga(rga)
+    const updatedPet = { ...pet, ...updatePetDto, tutorId }
 
-  update(id: number, updatePetDto: UpdatePetDto) {
-    return `This action updates a #${id} pet`
+    return this.prismaService.pets.update({
+      where: { rga },
+      data: PetsMapper.toPrisma(new Pet(updatedPet, tutorId, pet.rga)),
+    })
   }
 
   remove(id: number) {
@@ -39,6 +41,12 @@ export class PetsService {
   async findByMicrochip(microchip: string) {
     return this.prismaService.pets.findFirst({
       where: { microchip },
+    })
+  }
+
+  async findByRga(rga: string) {
+    return this.prismaService.pets.findUnique({
+      where: { rga },
     })
   }
 }

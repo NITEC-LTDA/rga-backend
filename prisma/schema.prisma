@@ -52,12 +52,12 @@ model Pets {
   name      String?
   species   String
   breed     String
-  birthdate DateTime
+  birthDate DateTime
   gender    String   @db.VarChar(10)
   color     String   @db.VarChar(20)
   microchip String?
-  image_url String
-  rga       String
+  imageUrl  String
+  rga       String   @unique
   tutorId   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

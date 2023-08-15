@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpCode,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common'
 import { PetsService } from './pets.service'
 import { CreatePetDto } from './dto/create-pet.dto'
@@ -42,14 +44,34 @@ export class PetsController {
     return prismaPets.map((pet) => PetsMapper.toHttp(pet))
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.petsService.findOne(+id)
+  @Get('/search')
+  async findOne(
+    @Body() { rga, microchip }: { rga?: string; microchip?: string },
+  ) {
+    let pet
+
+    if (rga) {
+      pet = await this.petsService.findByRga(rga)
+    } else if (microchip) {
+      pet = await this.petsService.findByMicrochip(microchip)
+    } else {
+      throw new BadRequestException('Either rga or microchip must be provided')
+    }
+
+    if (!pet) {
+      throw new NotFoundException('Pet not found')
+    }
+
+    return PetsMapper.toHttp(pet)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePetDto: UpdatePetDto) {
-    return this.petsService.update(+id, updatePetDto)
+  @Patch(':rga')
+  update(
+    @GetCurrentUserId() currentUserId: string,
+    @Param('rga') rga: string,
+    @Body() updatePetDto: UpdatePetDto,
+  ) {
+    return this.petsService.update(rga, currentUserId, updatePetDto)
   }
 
   @Delete(':id')
