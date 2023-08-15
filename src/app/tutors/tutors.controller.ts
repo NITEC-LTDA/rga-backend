@@ -16,6 +16,7 @@ import { UpdateTutorDto } from './dto/update-tutor.dto'
 import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors.mapper'
 import { AlreadyExistsException } from '../../commons/exceptions/already-exists.exception'
 import { Public } from '@/commons/decorators/public.decorator'
+import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 
 @Controller('tutors')
 export class TutorsController {
@@ -36,9 +37,9 @@ export class TutorsController {
     return this.tutorsService.create(createTutorDto)
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const tutor = await this.tutorsService.findOne(id)
+  @Get('/me')
+  async findOne(@GetCurrentUserId() currentUserId: string) {
+    const tutor = await this.tutorsService.findOne(currentUserId)
 
     if (!tutor) {
       throw new NotFoundException('Tutor not found')
@@ -47,12 +48,12 @@ export class TutorsController {
     return TutorsMapper.toHttp(tutor)
   }
 
-  @Patch(':id')
+  @Patch('/me')
   async update(
-    @Param('id') id: string,
+    @GetCurrentUserId() currentUserId: string,
     @Body() updateTutorDto: UpdateTutorDto,
   ) {
-    const tutorExists = await this.tutorsService.findOne(id)
+    const tutorExists = await this.tutorsService.findOne(currentUserId)
 
     if (!tutorExists) {
       throw new NotFoundException('Tutor not found')
@@ -72,12 +73,12 @@ export class TutorsController {
       throw new AlreadyExistsException('CPF already in use')
     }
 
-    const tutor = await this.tutorsService.update(id, updateTutorDto)
+    const tutor = await this.tutorsService.update(currentUserId, updateTutorDto)
 
     return TutorsMapper.toHttp(tutor)
   }
 
-  @Delete(':id')
+  @Delete()
   @HttpCode(204)
   remove(@Param('id') id: string) {
     return new NotImplementedException()
