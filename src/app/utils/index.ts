@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto'
-
+// TODO: this will change when we define the RGA format
 export function generateRga(length: number) {
   const rb = randomBytes(Math.ceil((length * 3) / 4)) // Adjust length to account for base64 encoding
   const randomBase64 = rb.toString('base64')
