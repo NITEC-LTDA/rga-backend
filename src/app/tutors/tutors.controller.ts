@@ -4,11 +4,8 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
   HttpCode,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common'
 import { TutorsService } from './tutors.service'
 import { CreateTutorDto } from './dto/create-tutor.dto'
@@ -76,11 +73,5 @@ export class TutorsController {
     const tutor = await this.tutorsService.update(currentUserId, updateTutorDto)
 
     return TutorsMapper.toHttp(tutor)
-  }
-
-  @Delete()
-  @HttpCode(204)
-  remove(@Param('id') id: string) {
-    return new NotImplementedException()
   }
 }

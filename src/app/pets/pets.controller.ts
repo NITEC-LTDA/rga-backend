@@ -73,9 +73,4 @@ export class PetsController {
   ) {
     return this.petsService.update(rga, currentUserId, updatePetDto)
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.petsService.remove(+id)
-  }
 }
