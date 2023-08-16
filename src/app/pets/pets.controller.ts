@@ -31,7 +31,7 @@ export class PetsController {
       createPetDto.microchip &&
       (await this.petsService.findByMicrochip(createPetDto.microchip))
     ) {
-      throw new AlreadyExistsException('Microchip already in use')
+      throw new AlreadyExistsException('Microchip já cadastrado')
     }
 
     const prismaPet = await this.petsService.create(createPetDto, currentUserId)

@@ -20,10 +20,14 @@ export class AuthService {
 
   async signIn(cpf: string, pass: string): Promise<Tokens> {
     const tutor = await this.tutorsService.findByCpf(cpf)
+
+    if (!tutor) {
+      throw new UnauthorizedException('CPF não cadastrado ou inválido!')
+    }
     const hashedPassword = this.hash(pass)
 
     if (tutor?.password !== hashedPassword) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('Senha inválida!')
     }
 
     const [at, rt] = await this.createTokens(tutor)
