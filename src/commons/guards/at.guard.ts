@@ -1,4 +1,8 @@
-import { ExecutionContext, Injectable } from '@nestjs/common'
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 
@@ -17,5 +21,17 @@ export class AtGuard extends AuthGuard('jwt') {
     if (isPublic) return true
 
     return super.canActivate(context)
+  }
+
+  handleRequest(err, user, info: Error) {
+    if (err || !user) {
+      throw (
+        err ||
+        new UnauthorizedException(
+          info?.message || 'Token is invalid or expired',
+        )
+      )
+    }
+    return user
   }
 }
