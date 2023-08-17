@@ -38,10 +38,6 @@ export class TutorsService {
     })
   }
 
-  async remove(id: string) {
-    return this.prismaService.tutors.delete({ where: { id } })
-  }
-
   async findByEmail(email: string) {
     return this.prismaService.tutors.findUnique({ where: { email } })
   }

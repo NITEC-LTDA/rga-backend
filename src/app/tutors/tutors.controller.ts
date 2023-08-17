@@ -4,11 +4,8 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
   HttpCode,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common'
 import { TutorsService } from './tutors.service'
 import { CreateTutorDto } from './dto/create-tutor.dto'
@@ -27,11 +24,11 @@ export class TutorsController {
   @HttpCode(201)
   async create(@Body() createTutorDto: CreateTutorDto) {
     if (await this.tutorsService.findByEmail(createTutorDto.email)) {
-      throw new AlreadyExistsException('Email already in use')
+      throw new AlreadyExistsException('E-mail já cadastrado')
     }
 
     if (await this.tutorsService.findByCpf(createTutorDto.cpf)) {
-      throw new AlreadyExistsException('CPF already in use')
+      throw new AlreadyExistsException('CPF já cadastrado')
     }
 
     return this.tutorsService.create(createTutorDto)
@@ -56,31 +53,25 @@ export class TutorsController {
     const tutorExists = await this.tutorsService.findOne(currentUserId)
 
     if (!tutorExists) {
-      throw new NotFoundException('Tutor not found')
+      throw new NotFoundException('Tutor não encontrado')
     }
 
     if (
       (await this.tutorsService.findByEmail(updateTutorDto.email)) &&
       updateTutorDto.email !== tutorExists.email
     ) {
-      throw new AlreadyExistsException('Email already in use')
+      throw new AlreadyExistsException('E-mail já em uso')
     }
 
     if (
       (await this.tutorsService.findByCpf(updateTutorDto.cpf)) &&
       updateTutorDto.cpf !== tutorExists.cpf
     ) {
-      throw new AlreadyExistsException('CPF already in use')
+      throw new AlreadyExistsException('CPF já em uso')
     }
 
     const tutor = await this.tutorsService.update(currentUserId, updateTutorDto)
 
     return TutorsMapper.toHttp(tutor)
-  }
-
-  @Delete()
-  @HttpCode(204)
-  remove(@Param('id') id: string) {
-    return new NotImplementedException()
   }
 }

@@ -20,6 +20,12 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
 
     if (!refreshToken) throw new ForbiddenException('Refresh token malformed')
 
+    // Manually check token expiration
+    const currentTimestamp = Math.floor(Date.now() / 1000) // current time in seconds since the UNIX epoch
+    if (payload.exp && currentTimestamp > payload.exp) {
+      throw new ForbiddenException('Refresh token has expired')
+    }
+
     return {
       ...payload,
       refreshToken,

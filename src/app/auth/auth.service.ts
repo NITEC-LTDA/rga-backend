@@ -20,10 +20,14 @@ export class AuthService {
 
   async signIn(cpf: string, pass: string): Promise<Tokens> {
     const tutor = await this.tutorsService.findByCpf(cpf)
+
+    if (!tutor) {
+      throw new UnauthorizedException('CPF não cadastrado ou inválido!')
+    }
     const hashedPassword = this.hash(pass)
 
     if (tutor?.password !== hashedPassword) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('Senha inválida!')
     }
 
     const [at, rt] = await this.createTokens(tutor)
@@ -88,7 +92,8 @@ export class AuthService {
 
     const at = this.jwtService.signAsync(payload, {
       secret: jwtConstants.atSecret,
-      expiresIn: '15m',
+      // TODO: change to 15m latter
+      expiresIn: '1m',
     })
 
     const rt = this.jwtService.signAsync(payload, {

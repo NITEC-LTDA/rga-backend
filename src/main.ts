@@ -16,6 +16,9 @@ async function bootstrap() {
   // enable DI for class-validator
   // this is an important step, for further steps in this article
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
+  app.enableCors({
+    origin: 'http://localhost:3000',
+  })
   await app.listen(3001)
 }
 bootstrap()
