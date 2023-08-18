@@ -12,6 +12,7 @@ export class TutorsMapper {
         name: raw.name,
         email: raw.email,
         cpf: raw.cpf,
+        phone: raw.phone,
         primaryAddressId: raw.primaryAddressId,
         addresses: raw.Tutor_Addresses.map((address) => ({
           id: address.id,
@@ -36,6 +37,7 @@ export class TutorsMapper {
       name: raw.name,
       email: raw.email,
       cpf: raw.cpf,
+      phone: raw.phone,
       primaryAddressId: raw.primaryAddressId,
       addresses: [],
       createdAt: raw.createdAt,
@@ -50,6 +52,7 @@ export class TutorsMapper {
       email: tutor.email,
       password: tutor.password,
       cpf: tutor.cpf,
+      phone: tutor.phone,
       primaryAddressId: tutor.primaryAddressId,
       createdAt: tutor.createdAt,
       updatedAt: tutor.updatedAt,

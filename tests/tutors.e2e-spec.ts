@@ -73,6 +73,7 @@ describe('TutorsController (e2e)', () => {
         email: 'john@gmail.com',
         password: '123456789',
         cpf: '123.456.789-10',
+        phone: '(11) 99999-9999',
       })
       .expect(201)
   })

@@ -5,6 +5,7 @@ interface TutorProps {
   name: string
   email: string
   password: string
+  phone: string
   cpf: string
   primaryAddressId?: string
   createdAt?: Date
@@ -41,6 +42,14 @@ export class Tutor {
 
   public set email(email: string) {
     this.props.email = email
+  }
+
+  public get phone(): string {
+    return this.props.phone
+  }
+
+  public set phone(phone: string) {
+    this.props.phone = phone
   }
 
   public get password(): string {

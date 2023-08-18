@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsString,
+  MinLength,
+} from 'class-validator'
 
 export class CreateTutorDto {
   @IsString()
@@ -11,6 +17,10 @@ export class CreateTutorDto {
   @IsString()
   @MinLength(8)
   password: string
+
+  @IsString()
+  @IsPhoneNumber('BR')
+  phone: string
 
   @IsString()
   @IsNotEmpty()
