@@ -52,6 +52,8 @@ RUN npm ci --only=production && npm cache clean --force
 
 USER node
 
+EXPOSE 3001
+
 ###################
 # PRODUCTION
 ###################
