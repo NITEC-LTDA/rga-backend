@@ -3,10 +3,6 @@ import { IsNotEmpty, IsString } from 'class-validator'
 export class CreateTutorAddressDto {
   @IsString()
   @IsNotEmpty()
-  tutorId: string
-
-  @IsString()
-  @IsNotEmpty()
   street: string
 
   @IsString()

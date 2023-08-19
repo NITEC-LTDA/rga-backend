@@ -8,27 +8,8 @@ import { TutorsAddressesMapper } from '@/infra/database/prisma/mappers/tutors_ad
 @Injectable()
 export class TutorAddressesService {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(createTutorAddressDto: CreateTutorAddressDto) {
-    const tutorAddress = new TutorAddress(createTutorAddressDto)
-
+  async create(tutorId: string, tutorAddress: TutorAddress) {
     const prismaTutorAddress = TutorsAddressesMapper.toPrisma(tutorAddress)
-
-    const addressCount = await this.prismaService.tutor_Addresses.count({
-      where: {
-        tutor_id: prismaTutorAddress.tutor_id,
-      },
-    })
-
-    if (addressCount === 0) {
-      this.prismaService.tutors.update({
-        where: {
-          id: prismaTutorAddress.tutor_id,
-        },
-        data: {
-          primaryAddressId: prismaTutorAddress.id,
-        },
-      })
-    }
 
     return this.prismaService.tutor_Addresses.create({
       data: prismaTutorAddress,
@@ -57,5 +38,11 @@ export class TutorAddressesService {
 
   remove(id: number) {
     return `This action removes a #${id} tutorAddress`
+  }
+
+  async count(where: any) {
+    return this.prismaService.tutor_Addresses.count({
+      where,
+    })
   }
 }
