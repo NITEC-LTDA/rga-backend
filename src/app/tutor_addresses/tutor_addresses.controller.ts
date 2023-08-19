@@ -12,6 +12,7 @@ import { TutorAddressesService } from './tutor_addresses.service'
 import { CreateTutorAddressDto } from './dto/create-tutor_address.dto'
 import { UpdateTutorAddressDto } from './dto/update-tutor_address.dto'
 import { TutorsAddressesMapper } from '@/infra/database/prisma/mappers/tutors_addresses.mapper'
+import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 
 @Controller('tutor-addresses')
 export class TutorAddressesController {
@@ -28,8 +29,9 @@ export class TutorAddressesController {
   }
 
   @Get()
-  findAll() {
-    return this.tutorAddressesService.findAll()
+  @HttpCode(200)
+  findAll(@GetCurrentUserId() currentUserId: string) {
+    return this.tutorAddressesService.findAll(currentUserId)
   }
 
   @Get(':id')

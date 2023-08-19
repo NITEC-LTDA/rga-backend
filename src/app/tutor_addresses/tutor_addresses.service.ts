@@ -35,8 +35,16 @@ export class TutorAddressesService {
     })
   }
 
-  findAll() {
-    return `This action returns all tutorAddresses`
+  async findAll(tutorId: string) {
+    const tutorAddresses = await this.prismaService.tutor_Addresses.findMany({
+      where: {
+        tutor_id: tutorId,
+      },
+    })
+
+    return tutorAddresses.map((tutorAddress) => {
+      return TutorsAddressesMapper.toHttp(tutorAddress)
+    })
   }
 
   findOne(id: number) {
