@@ -41,7 +41,7 @@ export class TutorAddressesController {
     })
     // IF THIS IS THE FIRST ADDRESS, SET IT AS PRIMARY
     if (addressCount === 0) {
-      this.tutorsService.update(currentUserId, {
+      await this.tutorsService.update(currentUserId, {
         primaryAddressId: tutorAddress.id,
       })
     }
