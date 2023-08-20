@@ -70,50 +70,39 @@ describe('TutorsController (e2e)', () => {
       .send({
         name: 'John Doe',
         email: 'john@gmail.com',
-        password: '123456789',
+        password: 'aaaaaqqqqq',
         cpf: '123.456.789-10',
         phone: '(11) 99999-9999',
       })
       .expect(201)
-  })
 
-  it('/ (GET)', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
         cpf: '123.456.789-10',
-        password: '123456789',
+        password: 'aaaaaqqqqq',
       })
+
+    console.log(body)
 
     const { accessToken } = body
+    console.log(accessToken)
 
     const response = await request(app.getHttpServer())
-      .get(`/tutors/me`)
-      .auth(accessToken, { type: 'bearer' })
-      .expect(200)
-
-    expect(response.body.cpf).toBe('123.456.789-10')
-  })
-
-  it('/ (PATCH)', async () => {
-    const { body } = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/tutor-addresses')
       .send({
-        cpf: '123.456.789-10',
-        password: '123456789',
+        street: '123 Main Street',
+        number: '456',
+        zipcode: '90210',
+        city: 'Los Angeles',
+        state: 'California',
+        country: 'United States',
+        neighborhood: 'Beverly Hills',
       })
-
-    const { accessToken } = body
-
-    const response = await request(app.getHttpServer())
-      .patch(`/tutors/me`)
       .auth(accessToken, { type: 'bearer' })
-      .send({
-        name: 'John Doe',
-        email: 'john234@gmail.com',
-        cpf: '123.456.789-10',
-      })
+      .expect(201)
 
-    expect(response.body.email).toBe('john234@gmail.com')
+    expect(response.body.street).toBe('123 Main Street')
+    expect(response.body.number).toBe('456')
   })
 })

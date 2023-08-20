@@ -29,11 +29,7 @@ export class TutorAddressesController {
     @GetCurrentUserId() currentUserId: string,
     @Body() createTutorAddressDto: CreateTutorAddressDto,
   ) {
-    const addressCount = await this.tutorAddressesService.count({
-      where: {
-        tutor_id: currentUserId,
-      },
-    })
+    const addressCount = await this.tutorAddressesService.count(currentUserId)
     // CREATE A NEW ADDRESS
     const tutorAddress = new TutorAddress({
       ...createTutorAddressDto,
@@ -41,7 +37,7 @@ export class TutorAddressesController {
     })
     // IF THIS IS THE FIRST ADDRESS, SET IT AS PRIMARY
     if (addressCount === 0) {
-      this.tutorsService.update(currentUserId, {
+      await this.tutorsService.update(currentUserId, {
         primaryAddressId: tutorAddress.id,
       })
     }

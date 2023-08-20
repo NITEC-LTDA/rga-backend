@@ -93,7 +93,7 @@ export class AuthService {
     const at = this.jwtService.signAsync(payload, {
       secret: jwtConstants.atSecret,
       // TODO: change to 15m latter
-      expiresIn: '1m',
+      expiresIn: '15m',
     })
 
     const rt = this.jwtService.signAsync(payload, {

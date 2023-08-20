@@ -40,9 +40,11 @@ export class TutorAddressesService {
     return `This action removes a #${id} tutorAddress`
   }
 
-  async count(where: any) {
+  async count(tutorId: string) {
     return this.prismaService.tutor_Addresses.count({
-      where,
+      where: {
+        tutor_id: tutorId,
+      },
     })
   }
 }
