@@ -42,10 +42,7 @@ export class TutorAddressesController {
       })
     }
     // SAVE THE ADDRESS
-    const address = await this.tutorAddressesService.create(
-      currentUserId,
-      tutorAddress,
-    )
+    const address = await this.tutorAddressesService.create(tutorAddress)
 
     return TutorsAddressesMapper.toHttp(address)
   }
