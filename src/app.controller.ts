@@ -1,11 +1,12 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Res } from '@nestjs/common'
 import { Public } from '@/commons/decorators/public.decorator'
+import { FastifyReply } from 'fastify'
 
-@Controller('tutors')
+@Controller()
 export class AppController {
   @Public()
   @Get('/health-check')
-  async healthCheck() {
-    return 'ok'
+  async healthCheck(@Res() res: FastifyReply) {
+    return res.status(204).send()
   }
 }
