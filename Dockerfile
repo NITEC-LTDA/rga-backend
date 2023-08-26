@@ -27,6 +27,8 @@ FROM node:18-alpine As build
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY startProduction.sh /usr/src/app/
+COPY prisma ./prisma
 
 # In order to run `npm run build` we need access to the Nest CLI.
 # The Nest CLI is a dev dependency,
@@ -57,9 +59,11 @@ RUN npm ci --only=production && npm cache clean --force
 
 FROM node:18-alpine As production
 
-# Copy the bundled code from the build stage to the production image
+# Copy the bundled code and script from the build stage to the production image
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/prisma ./prisma
+COPY --from=build /usr/src/app/startProduction.sh ./startProduction.sh
 
 # This is often required for Node.js apps to run in production mode
 ENV NODE_ENV production
@@ -67,5 +71,8 @@ ENV NODE_ENV production
 # This is informational and helps when running the container
 EXPOSE 3001
 
-# Start the server using the production build
-CMD [ "node", "dist/src/main.js" ]
+# Run startProduction.sh
+CMD ["sh", "startProduction.sh"]
+
+
+
