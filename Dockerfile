@@ -1,78 +1,56 @@
-###################
-# BUILD FOR LOCAL DEVELOPMENT
-###################
-
-FROM node:18-alpine As development
+# Use a specific version for reproducibility
+FROM node:18.17.0-alpine AS development
 
 # Create app directory
 WORKDIR /usr/src/app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
+# Install app dependencies
 COPY package*.json ./
-
-# Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
 
 # Bundle app source
 COPY . .
 
-###################
-# BUILD FOR PRODUCTION
-###################
+# Build stage
+FROM node:18.9.0-alpine AS build
 
-FROM node:18-alpine As build
-
+# Create app directory
 WORKDIR /usr/src/app
 
+# Copy necessary files for build
 COPY package*.json ./
+COPY tsconfig.json ./
+COPY tsconfig.build.json ./
+COPY src ./src
 COPY startProduction.sh /usr/src/app/
 COPY prisma ./prisma
-
-# In order to run `npm run build` we need access to the Nest CLI.
-# The Nest CLI is a dev dependency,
-# In the previous development stage we ran `npm ci` which installed all dependencies.
-# So we can copy over the node_modules directory from the development image into this build image.
-COPY --from=development /usr/src/app/node_modules ./node_modules
-
-COPY . .
-
-# Generate Prisma Client
+# Install dependencies and generate Prisma client
+RUN npm ci
 RUN npx prisma generate
 
-# Run the build command which creates the production bundle
+# Run build command to create the production bundle
 RUN npm run build
 
-# Set NODE_ENV environment variable
-ENV NODE_ENV production
-
-# Running `npm ci` removes the existing node_modules directory.
-# Passing in --only=production ensures that only the production dependencies are installed.
-# This ensures that the node_modules directory is as optimized as possible.
+# Remove dev dependencies
 RUN npm ci --only=production && npm cache clean --force
 
+# Set environment variable for production
+ENV NODE_ENV production
 
-###################
-# PRODUCTION
-###################
+# Final stage for production
+FROM node:18.17.0-alpine AS production
 
-FROM node:18-alpine As production
-
-# Copy the bundled code and script from the build stage to the production image
+# Copy necessary files from previous stages
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/prisma ./prisma
 COPY --from=build /usr/src/app/startProduction.sh ./startProduction.sh
 
-# This is often required for Node.js apps to run in production mode
+# Set environment variable for production
 ENV NODE_ENV production
 
-# This is informational and helps when running the container
+# Expose port
 EXPOSE 3001
 
-# Run startProduction.sh
+# Start command
 CMD ["sh", "startProduction.sh"]
-
-
-
