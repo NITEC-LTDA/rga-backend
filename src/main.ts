@@ -29,7 +29,9 @@ async function bootstrap() {
   // enable helmet
   await app.register(helmet)
   // enable CORS
-  app.enableCors()
+  app.enableCors({
+    origin: '*',
+  })
 
   await app.listen(3001)
 }

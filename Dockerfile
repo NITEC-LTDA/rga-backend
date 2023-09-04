@@ -1,5 +1,5 @@
 # Use a specific version for reproducibility
-FROM node:18.17.0-alpine AS development
+FROM node:18-alpine AS development
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -12,7 +12,7 @@ RUN npm ci
 COPY . .
 
 # Build stage
-FROM node:18.9.0-alpine AS build
+FROM node:18-alpine AS build
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -38,7 +38,7 @@ RUN npm ci --only=production && npm cache clean --force
 ENV NODE_ENV production
 
 # Final stage for production
-FROM node:18.17.0-alpine AS production
+FROM node:18-alpine AS production
 
 # Copy necessary files from previous stages
 COPY --from=build /usr/src/app/node_modules ./node_modules
