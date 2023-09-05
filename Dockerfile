@@ -52,5 +52,9 @@ ENV NODE_ENV production
 # Expose port
 EXPOSE 3001
 
+# Run prisma migrations
+RUN npx prisma migrate deploy
+
 # Start command
-CMD ["sh", "startProduction.sh"]
+CMD ["npm", "run", "start:prod"]
+

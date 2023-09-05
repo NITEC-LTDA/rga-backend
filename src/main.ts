@@ -33,6 +33,8 @@ async function bootstrap() {
     origin: '*',
   })
 
-  await app.listen(3001)
+  await app.listen(3001, '0.0.0.0', () => {
+    console.log('Server is running on port 3001')
+  })
 }
 bootstrap()
