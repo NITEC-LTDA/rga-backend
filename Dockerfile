@@ -5,11 +5,9 @@ FROM node:18-alpine AS development
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package*.json ./
-RUN npm ci
-
-# Bundle app source
 COPY . .
+
+RUN npm ci
 
 # Build stage
 FROM node:18-alpine AS build
@@ -18,12 +16,12 @@ FROM node:18-alpine AS build
 WORKDIR /usr/src/app
 
 # Copy necessary files for build
-COPY package*.json ./
-COPY tsconfig.json ./
-COPY tsconfig.build.json ./
-COPY src ./src
-COPY startProduction.sh /usr/src/app/
-COPY prisma ./prisma
+COPY --from=development /usr/src/app/package*.json ./
+COPY --from=development /usr/src/app/tsconfig*.json ./
+COPY --from=development /usr/src/app/src ./src
+COPY --from=development /usr/src/app/startProduction.sh ./
+COPY --from=development /usr/src/app/prisma ./prisma
+
 # Install dependencies and generate Prisma client
 RUN npm ci
 RUN npx prisma generate
@@ -34,17 +32,19 @@ RUN npm run build
 # Remove dev dependencies
 RUN npm ci --only=production && npm cache clean --force
 
-# Set environment variable for production
-ENV NODE_ENV production
-
 # Final stage for production
 FROM node:18-alpine AS production
 
+# Set Working directory for the final stage
+WORKDIR /usr/src/app
+
 # Copy necessary files from previous stages
 COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/dist ./dist/src/
 COPY --from=build /usr/src/app/prisma ./prisma
 COPY --from=build /usr/src/app/startProduction.sh ./startProduction.sh
+COPY --from=development /usr/src/app/package*.json ./
+COPY --from=development /usr/src/app/tsconfig*.json ./
 
 # Set environment variable for production
 ENV NODE_ENV production
@@ -52,9 +52,5 @@ ENV NODE_ENV production
 # Expose port
 EXPOSE 3001
 
-# Run prisma migrations
-RUN npx prisma migrate deploy
-
-# Start command
-CMD ["npm", "run", "start:prod"]
-
+# run sh with permissions
+CMD ["sh", "startProduction.sh"]
