@@ -7,6 +7,6 @@ export class AppController {
   @Public()
   @Get('/health-check')
   async healthCheck(@Res() res: FastifyReply) {
-    return res.status(204).send()
+    return res.status(204).send('OK')
   }
 }
