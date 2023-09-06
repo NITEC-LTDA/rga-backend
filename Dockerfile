@@ -52,8 +52,6 @@ ENV NODE_ENV production
 # Expose port
 EXPOSE 3001
 
-RUN chmod -x startProduction.sh
-RUN chown root:root startProduction.sh
 
 # run sh with permissions
 CMD ["sh", "startProduction.sh"]
