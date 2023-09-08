@@ -25,6 +25,10 @@ model Tutors {
   Tutor_Addresses  Tutor_Addresses[]
   Pets             Pets[]
 
+  // New relationship arrays for PetsTransferRequest
+  sentRequests     PetsTransferRequest[] @relation("sender")
+  receivedRequests PetsTransferRequest[] @relation("receiver")
+
   @@index([primaryAddressId], name: "primaryAddressId")
   @@index([cpf], name: "cpf")
   @@map("tutors")
@@ -63,10 +67,35 @@ model Pets {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Tutors Tutors? @relation(fields: [tutorId], references: [id])
+  Tutors              Tutors?               @relation(fields: [tutorId], references: [id])
+  PetsTransferRequest PetsTransferRequest[]
 
   @@index([tutorId], name: "pets_tutor_id")
   @@index([microchip], name: "pets_microchip")
   @@index([rga], name: "pets_rga")
   @@map("pets")
+}
+
+model PetsTransferRequest {
+  id         String    @id @default(uuid())
+  petId      String
+  senderId   String
+  receiverId String
+  acceptedAt DateTime?
+  canceledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Existing relationship to Pets
+  Pets Pets @relation(fields: [petId], references: [id])
+
+  // New relationships to Tutors
+  sender   Tutors @relation(fields: [senderId], references: [id], name: "sender")
+  receiver Tutors @relation(fields: [receiverId], references: [id], name: "receiver")
+
+  @@index([petId], name: "petId")
+  @@index([senderId], name: "senderIdTutorId")
+  @@index([receiverId], name: "receiverIdTutorId")
+  @@map("pets_transfer_request")
 }
