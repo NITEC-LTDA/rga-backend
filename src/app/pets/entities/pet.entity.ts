@@ -10,7 +10,7 @@ interface PetsProps {
   color: string
   rga?: string
   microchip?: string
-  imageUrl: string
+  imageUrl?: string
   tutorId?: string
   createdAt?: Date
   updatedAt?: Date

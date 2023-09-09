@@ -9,6 +9,8 @@ import {
   NotFoundException,
   BadRequestException,
   Query,
+  Put,
+  Req,
 } from '@nestjs/common'
 import { PetsService } from './pets.service'
 import { CreatePetDto } from './dto/create-pet.dto'
@@ -16,11 +18,16 @@ import { UpdatePetDto } from './dto/update-pet.dto'
 import { AlreadyExistsException } from '@/commons/exceptions/already-exists.exception'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
-import { Pet } from './entities/pet.entity'
+import { S3StorageService } from '@/infra/cloud_storage/aws/s3.service'
+import { FastifyRequest } from 'fastify'
+import { streamToBuffer } from '../utils'
 
 @Controller('pets')
 export class PetsController {
-  constructor(private readonly petsService: PetsService) {}
+  constructor(
+    private readonly petsService: PetsService,
+    private readonly storageService: S3StorageService,
+  ) {}
 
   @Post()
   @HttpCode(201)
@@ -37,6 +44,50 @@ export class PetsController {
 
     const prismaPet = await this.petsService.create(createPetDto, currentUserId)
     return PetsMapper.toHttp(prismaPet)
+  }
+
+  @Put(':rga/image')
+  @HttpCode(201)
+  async uploadPetImage(
+    @GetCurrentUserId() currentUserId: string,
+    @Param('rga') rga: string,
+    @Req() request: FastifyRequest,
+  ) {
+    // DELETE PREVIOUS IMAGE
+
+    const pet = await this.petsService.findByRga(rga)
+    if (!pet) {
+      throw new NotFoundException('Pet not found')
+    }
+
+    if (pet.imageUrl) {
+      const fileName = pet.imageUrl.split('/').slice(-1)[0]
+      await this.storageService.deleteBlob(
+        `${currentUserId}/${rga}/image/${fileName}`,
+      )
+    }
+
+    const data = await request.file()
+    const hashedFileName = `${data.filename}-${Date.now()}`
+    const fileName = `${currentUserId}/${rga}/image/${hashedFileName}`
+    const mimeType = data.mimetype
+
+    // CONVERT STREAM TO BUFFER
+    const buffer = await streamToBuffer(data.file)
+
+    // UPLOAD TO S3
+    await this.storageService.putBlob(fileName, buffer, mimeType)
+
+    const getObjectUrl = this.storageService.getObjectUrl(fileName)
+
+    // UPDATE PET IMAGE URL
+    const updatedPet = { ...pet, imageUrl: getObjectUrl }
+    await this.petsService.update(rga, updatedPet)
+
+    return {
+      message: 'Pet image uploaded successfully',
+      imageUrl: getObjectUrl,
+    }
   }
 
   @Get()
@@ -77,7 +128,6 @@ export class PetsController {
       throw new NotFoundException('Pet not found')
     }
     const updatedPet = { ...pet, ...updatePetDto }
-    console.log(updatedPet)
     return this.petsService.update(rga, updatedPet)
   }
 }
