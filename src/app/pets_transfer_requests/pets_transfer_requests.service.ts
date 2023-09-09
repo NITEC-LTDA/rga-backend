@@ -1,29 +1,62 @@
 import { Injectable } from '@nestjs/common'
 import { CreatePetsTransferRequestDto } from './dto/create-pets_transfer_request.dto'
-import { UpdatePetsTransferRequestDto } from './dto/update-pets_transfer_request.dto'
+import { PrismaService } from '@/infra/database/prisma/prisma.service'
+import { PetsTransferRequest } from './entities/pets_transfer_request.entity'
+import { PetsTransferRequestMapper } from '@/infra/database/prisma/mappers/pets_transfer_request.mapper'
 
 @Injectable()
 export class PetsTransferRequestsService {
-  create(createPetsTransferRequestDto: CreatePetsTransferRequestDto) {
-    return 'This action adds a new petsTransferRequest'
-  }
+  constructor(private readonly prismaService: PrismaService) {}
 
-  findAll() {
-    return `This action returns all petsTransferRequests`
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} petsTransferRequest`
-  }
-
-  update(
-    id: number,
-    updatePetsTransferRequestDto: UpdatePetsTransferRequestDto,
+  create(
+    senderId: string,
+    createPetsTransferRequestDto: CreatePetsTransferRequestDto,
   ) {
-    return `This action updates a #${id} petsTransferRequest`
+    const request = new PetsTransferRequest({
+      senderId,
+      ...createPetsTransferRequestDto,
+    })
+    const prismaRequest = PetsTransferRequestMapper.toPrisma(request)
+    return this.prismaService.petsTransferRequest.create({
+      data: prismaRequest,
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} petsTransferRequest`
+  findAllSent(senderId: string) {
+    return this.prismaService.petsTransferRequest.findMany({
+      where: { senderId },
+    })
+  }
+
+  findAllReceived(receiverId: string) {
+    return this.prismaService.petsTransferRequest.findMany({
+      where: { receiverId },
+    })
+  }
+
+  acceptRequest(requestId: string) {
+    return this.prismaService.petsTransferRequest.update({
+      where: { id: requestId, canceledAt: null },
+      data: { acceptedAt: new Date() },
+    })
+  }
+
+  async cancelRequest(requestId: string) {
+    return this.prismaService.petsTransferRequest.update({
+      where: { id: requestId, acceptedAt: null },
+      data: { canceledAt: new Date() },
+    })
+  }
+
+  async findOneCancellable(requestId: string) {
+    return this.prismaService.petsTransferRequest.findFirst({
+      where: { id: requestId, acceptedAt: null, canceledAt: null },
+    })
+  }
+
+  async findOneAcceptable(requestId: string) {
+    return this.prismaService.petsTransferRequest.findFirst({
+      where: { id: requestId, acceptedAt: null, canceledAt: null },
+    })
   }
 }

@@ -11,6 +11,7 @@ export class PetsMapper {
       birthDate: raw.birthDate,
       tutorId: raw.tutorId,
       rga: raw.rga,
+      color: raw.color,
       gender: raw.gender,
       microchip: raw.microchip,
       imageUrl: raw.imageUrl,

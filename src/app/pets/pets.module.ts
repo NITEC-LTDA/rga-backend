@@ -7,5 +7,6 @@ import { DatabaseModule } from '@/infra/database/database.module'
   imports: [DatabaseModule],
   controllers: [PetsController],
   providers: [PetsService],
+  exports: [PetsService],
 })
 export class PetsModule {}

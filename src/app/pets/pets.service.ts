@@ -49,4 +49,10 @@ export class PetsService {
       where: { rga },
     })
   }
+
+  async findByTutorId(tutorId: string) {
+    return this.prismaService.pets.findFirst({
+      where: { tutorId },
+    })
+  }
 }
