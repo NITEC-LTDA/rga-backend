@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, MaxLength, IsDateString } from 'class-validator'
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsDateString,
+  IsEmpty,
+  IsOptional,
+} from 'class-validator'
 
 export class CreatePetDto {
   @IsString()
@@ -29,5 +36,7 @@ export class CreatePetDto {
   @IsString()
   imageUrl: string
 
-  microchip?: string
+  @IsOptional()
+  @IsString()
+  microchip: string | null
 }

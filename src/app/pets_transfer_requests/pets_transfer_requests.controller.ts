@@ -74,7 +74,7 @@ export class PetsTransferRequestsController {
       newTutorialId,
       pet.rga,
     )
-    await this.petsService.update(pet.rga, newTutorialId, updatedPet)
+    await this.petsService.update(pet.rga, updatedPet)
 
     return this.petsTransferRequestsService.acceptRequest(requestId)
   }

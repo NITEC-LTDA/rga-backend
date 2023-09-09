@@ -24,13 +24,10 @@ export class PetsService {
     return pets
   }
 
-  async update(rga: string, tutorId: string, updatePetDto: UpdatePetDto) {
-    const pet = await this.findByRga(rga)
-    const updatedPet = { ...pet, ...updatePetDto, tutorId }
-
+  update(rga: string, updatedPet: UpdatePetDto) {
     return this.prismaService.pets.update({
       where: { rga },
-      data: PetsMapper.toPrisma(new Pet(updatedPet, tutorId, pet.rga)),
+      data: updatedPet,
     })
   }
 

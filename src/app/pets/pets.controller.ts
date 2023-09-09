@@ -16,6 +16,7 @@ import { UpdatePetDto } from './dto/update-pet.dto'
 import { AlreadyExistsException } from '@/commons/exceptions/already-exists.exception'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
+import { Pet } from './entities/pet.entity'
 
 @Controller('pets')
 export class PetsController {
@@ -66,11 +67,17 @@ export class PetsController {
   }
 
   @Patch(':rga')
-  update(
+  async update(
     @GetCurrentUserId() currentUserId: string,
     @Param('rga') rga: string,
     @Body() updatePetDto: UpdatePetDto,
   ) {
-    return this.petsService.update(rga, currentUserId, updatePetDto)
+    const pet = await this.petsService.findByRga(rga)
+    if (!pet) {
+      throw new NotFoundException('Pet not found')
+    }
+    const updatedPet = { ...pet, ...updatePetDto }
+    console.log(updatedPet)
+    return this.petsService.update(rga, updatedPet)
   }
 }
