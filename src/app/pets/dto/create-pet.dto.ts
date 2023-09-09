@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   MaxLength,
   IsDateString,
-  IsEmpty,
   IsOptional,
 } from 'class-validator'
 
@@ -32,9 +31,6 @@ export class CreatePetDto {
   @IsString()
   @MaxLength(10)
   color: string
-
-  @IsString()
-  imageUrl: string
 
   @IsOptional()
   @IsString()

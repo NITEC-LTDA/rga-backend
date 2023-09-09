@@ -11,7 +11,9 @@ import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_tr
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     AuthModule,
     TutorsModule,
     TutorAddressesModule,

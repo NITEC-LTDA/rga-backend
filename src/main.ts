@@ -1,5 +1,5 @@
 import helmet from '@fastify/helmet'
-
+import fastifyMultipart from 'fastify-multipart'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
@@ -21,6 +21,9 @@ async function bootstrap() {
       transform: true,
     }),
   )
+
+  // Register fastify-multipart
+  app.register(fastifyMultipart)
 
   // enable DI for class-validator
   // this is an important step, for further steps in this article

@@ -83,10 +83,7 @@ describe('TutorsController (e2e)', () => {
         password: 'aaaaaqqqqq',
       })
 
-    console.log(body)
-
     const { accessToken } = body
-    console.log(accessToken)
 
     const response = await request(app.getHttpServer())
       .post('/tutor-addresses')
