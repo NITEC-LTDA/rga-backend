@@ -30,7 +30,8 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
 
   // enable helmet
-  await app.register(helmet)
+  app.use(helmet)
+
   // enable CORS
   app.enableCors({
     origin: '*',
