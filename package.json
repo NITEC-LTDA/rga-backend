@@ -44,7 +44,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
-    "@rocketseat/eslint-config": "^1.2.0",
+    "@rocketseat/eslint-config": "^2.0.0",
     "@types/express": "^4.17.17",
     "@types/fastify-multipart": "^0.7.0",
     "@types/jest": "^29.5.2",
