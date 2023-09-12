@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY . .
 
-RUN npm ci
+RUN npm install
 
 # Build stage
 FROM node:18-alpine AS build
@@ -23,14 +23,14 @@ COPY --from=development /usr/src/app/startProduction.sh ./
 COPY --from=development /usr/src/app/prisma ./prisma
 
 # Install dependencies and generate Prisma client
-RUN npm ci
+RUN npm install
 RUN npx prisma generate
 
 # Run build command to create the production bundle
 RUN npm run build
 
 # Remove dev dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --only=production && npm cache clean --force
 
 # Final stage for production
 FROM node:18-alpine AS production
