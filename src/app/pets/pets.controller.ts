@@ -72,6 +72,20 @@ export class PetsController {
     const fileName = `${currentUserId}/${rga}/image/${hashedFileName}`
     const mimeType = data.mimetype
 
+    if (data.filesize > 1_048_576 * 5) {
+      throw new BadRequestException('File size must be less than 5MB')
+    }
+
+    // TODO: upload using stream
+    /**
+     * example:
+     * await pump(data.file, fs.createWriteStream(uploadDestination))
+     * import {pipeline} from 'node:stream'
+     * import {promisify} from 'node:util'
+     * const pump = promisify(pipeline)
+     *
+     * */
+
     // CONVERT STREAM TO BUFFER
     const buffer = await streamToBuffer(data.file)
 

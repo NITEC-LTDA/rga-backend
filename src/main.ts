@@ -22,7 +22,11 @@ async function bootstrap() {
   )
 
   // Register fastify-multipart
-  app.register(fastifyMultipart)
+  app.register(fastifyMultipart, {
+    limits: {
+      fileSize: 1_048_576 * 5, // 5MB
+    },
+  })
 
   // enable DI for class-validator
   // this is an important step, for further steps in this article
