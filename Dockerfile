@@ -1,5 +1,5 @@
 # Use a specific version for reproducibility
-FROM node:18-alpine AS development
+FROM node:20-alpine AS development
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -10,7 +10,7 @@ COPY . .
 RUN npm install
 
 # Build stage
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -33,7 +33,7 @@ RUN npm run build
 RUN npm install --only=production && npm cache clean --force
 
 # Final stage for production
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # Set Working directory for the final stage
 WORKDIR /usr/src/app
