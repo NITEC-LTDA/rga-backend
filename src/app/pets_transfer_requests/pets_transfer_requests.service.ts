@@ -8,13 +8,11 @@ import { PetsTransferRequestMapper } from '@/infra/database/prisma/mappers/pets_
 export class PetsTransferRequestsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(
-    senderId: string,
-    createPetsTransferRequestDto: CreatePetsTransferRequestDto,
-  ) {
+  create(senderId: string, receiverId: string, petId: string) {
     const request = new PetsTransferRequest({
       senderId,
-      ...createPetsTransferRequestDto,
+      receiverId,
+      petId,
     })
     const prismaRequest = PetsTransferRequestMapper.toPrisma(request)
     return this.prismaService.petsTransferRequest.create({

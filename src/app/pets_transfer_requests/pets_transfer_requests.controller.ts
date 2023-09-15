@@ -5,35 +5,44 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   HttpCode,
   NotFoundException,
 } from '@nestjs/common'
 import { PetsTransferRequestsService } from './pets_transfer_requests.service'
 import { CreatePetsTransferRequestDto } from './dto/create-pets_transfer_request.dto'
-import { UpdatePetsTransferRequestDto } from './dto/update-pets_transfer_request.dto'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { AlreadyCanceledException } from '@/commons/exceptions/already-canceled.exception'
 import { AlreadyAcceptedException } from '@/commons/exceptions/already-accepted.exception'
 import { PetsService } from '../pets/pets.service'
 import { Pet } from '../pets/entities/pet.entity'
+import { TutorsService } from '../tutors/tutors.service'
 
 @Controller('pets-transfer-requests')
 export class PetsTransferRequestsController {
   constructor(
     private readonly petsTransferRequestsService: PetsTransferRequestsService,
     private readonly petsService: PetsService,
+    private readonly tutorsService: TutorsService,
   ) {}
 
   @Post()
   @HttpCode(201)
-  create(
+  async create(
     @GetCurrentUserId() currentUserId: string,
     @Body() createPetsTransferRequestDto: CreatePetsTransferRequestDto,
   ) {
+    const receiver = await this.tutorsService.findByCpf(
+      createPetsTransferRequestDto.receiverCPF,
+    )
+
+    if (!receiver) {
+      throw new NotFoundException('Tutor não encontrado')
+    }
+
     return this.petsTransferRequestsService.create(
       currentUserId,
-      createPetsTransferRequestDto,
+      receiver.id,
+      createPetsTransferRequestDto.petId,
     )
   }
 
