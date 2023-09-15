@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { CreatePetsTransferRequestDto } from './dto/create-pets_transfer_request.dto'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { PetsTransferRequest } from './entities/pets_transfer_request.entity'
 import { PetsTransferRequestMapper } from '@/infra/database/prisma/mappers/pets_transfer_request.mapper'

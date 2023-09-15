@@ -14,7 +14,17 @@ export class PetsService {
     const rga = generateRga(9)
     const pet = new Pet(createPetDto, tutorId, rga)
     const prismaPet = PetsMapper.toPrisma(pet)
-    return this.prismaService.pets.create({ data: prismaPet })
+
+    return this.prismaService.pets.create({
+      data: {
+        ...prismaPet,
+        Tutors: {
+          connect: {
+            id: tutorId,
+          },
+        },
+      },
+    })
   }
 
   async findAll(tutorId: string) {

@@ -26,6 +26,7 @@ export class Pet {
       id: id ?? randomUUID(),
       tutorId,
       rga,
+      imageUrl: null,
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? new Date(),
     }

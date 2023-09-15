@@ -61,7 +61,7 @@ model Pets {
   gender    String   @db.VarChar(10)
   color     String   @db.VarChar(20)
   microchip String?
-  imageUrl  String
+  imageUrl  String?
   rga       String   @unique
   tutorId   String?
   createdAt DateTime @default(now())
