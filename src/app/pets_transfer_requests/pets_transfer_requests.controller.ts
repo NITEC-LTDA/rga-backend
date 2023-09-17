@@ -75,14 +75,10 @@ export class PetsTransferRequestsController {
     // Pet transfer logic
     const newTutorialId = isAcceptable.receiverId
     const pet = await this.petsService.findByTutorId(isAcceptable.senderId)
-    const updatedPet = new Pet(
-      {
-        ...pet,
-        tutorId: newTutorialId,
-      },
-      newTutorialId,
-      pet.rga,
-    )
+    const updatedPet = {
+      ...pet,
+      tutorId: newTutorialId,
+    }
     await this.petsService.update(pet.rga, updatedPet)
 
     return this.petsTransferRequestsService.acceptRequest(requestId)
