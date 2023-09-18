@@ -4,7 +4,7 @@ import { TutorsMapper } from './tutors.mapper'
 
 export class PetsMapper {
   static toHttp(raw: RawPet & { Tutors?: Tutors }) {
-    return {
+    const pet = {
       id: raw.id,
       name: raw.name,
       species: raw.species,
@@ -17,11 +17,14 @@ export class PetsMapper {
       imageUrl: raw.imageUrl,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
-
-      tutor: raw.hasOwnProperty('Tutors')
-        ? TutorsMapper.toHttp(raw.Tutors)
-        : null,
     }
+
+    // IF TUTOR INFO IS REQUESTED IN THE QUERY, INCLUDE IT
+    if (raw.Tutors) {
+      Object.assign(pet, { tutor: TutorsMapper.toHttp(raw.Tutors) })
+    }
+
+    return pet
   }
 
   static toPrisma(pet: Pet) {
