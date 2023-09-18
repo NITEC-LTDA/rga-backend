@@ -27,7 +27,7 @@ export class AuthService {
     const hashedPassword = this.hash(pass)
 
     if (tutor?.password !== hashedPassword) {
-      throw new UnauthorizedException('Senha inválida!')
+      throw new UnauthorizedException('Senha/CPF inválidos!')
     }
 
     const [at, rt] = await this.createTokens(tutor)

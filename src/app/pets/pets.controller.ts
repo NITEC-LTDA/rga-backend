@@ -21,6 +21,7 @@ import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
 import { S3StorageService } from '@/infra/cloud_storage/aws/s3.service'
 import { FastifyRequest } from 'fastify'
 import { streamToBuffer } from '../utils'
+import { Public } from '@/commons/decorators/public.decorator'
 
 @Controller('pets')
 export class PetsController {
@@ -110,6 +111,7 @@ export class PetsController {
     return prismaPets.map((pet) => PetsMapper.toHttp(pet))
   }
 
+  @Public()
   @Get('/search')
   async findOne(
     @Query() { rga, microchip }: { rga?: string; microchip?: string },

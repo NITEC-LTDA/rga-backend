@@ -7,6 +7,8 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify'
+import fastifyCors from '@fastify/cors'
+
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -33,7 +35,7 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
 
   // enable CORS
-  app.enableCors({
+  app.register(fastifyCors, {
     origin: '*',
   })
 

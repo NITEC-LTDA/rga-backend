@@ -48,12 +48,18 @@ export class PetsService {
   async findByMicrochip(microchip: string) {
     return this.prismaService.pets.findFirst({
       where: { microchip },
+      include: {
+        Tutors: true,
+      },
     })
   }
 
   async findByRga(rga: string) {
     return this.prismaService.pets.findUnique({
       where: { rga },
+      include: {
+        Tutors: true,
+      },
     })
   }
 
