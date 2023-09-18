@@ -26,7 +26,7 @@ export class TutorAddress {
   }
 
   public get id() {
-    return this._id
+    return this.props.id
   }
 
   public get tutorId(): string {

@@ -26,7 +26,7 @@ export class AuthService {
     }
     const hashedPassword = this.hash(pass)
 
-    if (tutor?.password !== hashedPassword) {
+    if (tutor.password !== hashedPassword) {
       throw new UnauthorizedException('Senha/CPF inválidos!')
     }
 

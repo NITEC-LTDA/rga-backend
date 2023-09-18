@@ -1,15 +1,15 @@
 import { Pet } from '@/app/pets/entities/pet.entity'
-import { Pets as RawPet } from '@prisma/client'
+import { Pets as RawPet, Tutors } from '@prisma/client'
+import { TutorsMapper } from './tutors.mapper'
 
 export class PetsMapper {
-  static toHttp(raw: RawPet) {
+  static toHttp(raw: RawPet & { Tutors?: Tutors }) {
     return {
       id: raw.id,
       name: raw.name,
       species: raw.species,
       breed: raw.breed,
       birthDate: raw.birthDate,
-      tutorId: raw.tutorId,
       rga: raw.rga,
       color: raw.color,
       gender: raw.gender,
@@ -17,6 +17,10 @@ export class PetsMapper {
       imageUrl: raw.imageUrl,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
+
+      tutor: raw.hasOwnProperty('Tutors')
+        ? TutorsMapper.toHttp(raw.Tutors)
+        : null,
     }
   }
 

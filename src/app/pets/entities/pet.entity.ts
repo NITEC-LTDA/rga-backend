@@ -33,7 +33,7 @@ export class Pet {
   }
 
   public get id() {
-    return this._id
+    return this.props.id
   }
 
   public get name(): string {

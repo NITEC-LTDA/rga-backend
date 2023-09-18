@@ -29,12 +29,15 @@ export class TutorsService {
   }
 
   async update(id: string, updateTutorDto: UpdateTutorDto) {
-    const tutor = await this.findOne(id)
+    const tutor = await this.prismaService.tutors.findUnique({
+      where: { id },
+    })
     const updatedTutor = { ...tutor, ...updateTutorDto }
 
     return this.prismaService.tutors.update({
       where: { id },
-      data: TutorsMapper.toPrisma(new Tutor(updatedTutor)),
+      data: updatedTutor,
+      include: { Tutor_Addresses: true },
     })
   }
 

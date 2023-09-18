@@ -49,7 +49,11 @@ export class PetsService {
     return this.prismaService.pets.findFirst({
       where: { microchip },
       include: {
-        Tutors: true,
+        Tutors: {
+          include: {
+            Tutor_Addresses: true,
+          },
+        },
       },
     })
   }
@@ -58,7 +62,11 @@ export class PetsService {
     return this.prismaService.pets.findUnique({
       where: { rga },
       include: {
-        Tutors: true,
+        Tutors: {
+          include: {
+            Tutor_Addresses: true,
+          },
+        },
       },
     })
   }
