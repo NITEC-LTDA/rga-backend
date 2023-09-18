@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TutorAddressesModule } from './app/tutor_addresses/tutor_addresses.module'
 import { TutorsModule } from './app/tutors/tutors.module'
@@ -8,6 +8,8 @@ import { AtGuard } from './commons/guards/at.guard'
 import { PetsModule } from './app/pets/pets.module'
 import { AppController } from './app.controller'
 import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_transfer_requests.module'
+import { AdminsModule } from './app/admins/admins.module'
+import { AdminOnlyMiddleware } from './commons/middlewares/admin-only.middleware'
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_tr
     TutorAddressesModule,
     PetsModule,
     PetsTransferRequestsModule,
+    AdminsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -28,4 +31,8 @@ import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_tr
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AdminOnlyMiddleware).forRoutes('/admins/*')
+  }
+}

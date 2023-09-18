@@ -30,7 +30,7 @@ export class AuthService {
       throw new UnauthorizedException('Senha/CPF inválidos!')
     }
 
-    const [at, rt] = await this.createTokens(tutor)
+    const [at, rt] = await this.createTokens(tutor.id)
     await this.updateRTHash(tutor.id, rt)
 
     return {
@@ -65,7 +65,7 @@ export class AuthService {
       throw new UnauthorizedException()
     }
 
-    const [at, newRt] = await this.createTokens(tutor)
+    const [at, newRt] = await this.createTokens(tutor.id)
     await this.updateRTHash(tutor.id, newRt)
 
     return {
@@ -85,9 +85,9 @@ export class AuthService {
     })
   }
 
-  private async createTokens(tutor): Promise<string[]> {
+  private async createTokens(id: string): Promise<string[]> {
     const payload = {
-      sub: tutor.id,
+      sub: id,
     }
 
     const at = this.jwtService.signAsync(payload, {
