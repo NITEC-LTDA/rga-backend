@@ -1,15 +1,15 @@
 import { Pet } from '@/app/pets/entities/pet.entity'
-import { Pets as RawPet } from '@prisma/client'
+import { Pets as RawPet, Tutors } from '@prisma/client'
+import { TutorsMapper } from './tutors.mapper'
 
 export class PetsMapper {
-  static toHttp(raw: RawPet) {
-    return {
+  static toHttp(raw: RawPet & { Tutors?: Tutors }) {
+    const pet = {
       id: raw.id,
       name: raw.name,
       species: raw.species,
       breed: raw.breed,
       birthDate: raw.birthDate,
-      tutorId: raw.tutorId,
       rga: raw.rga,
       color: raw.color,
       gender: raw.gender,
@@ -18,6 +18,13 @@ export class PetsMapper {
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     }
+
+    // IF TUTOR INFO IS REQUESTED IN THE QUERY, INCLUDE IT
+    if (raw.Tutors) {
+      Object.assign(pet, { tutor: TutorsMapper.toHttp(raw.Tutors) })
+    }
+
+    return pet
   }
 
   static toPrisma(pet: Pet) {

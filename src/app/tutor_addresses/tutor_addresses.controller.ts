@@ -30,6 +30,7 @@ export class TutorAddressesController {
     @Body() createTutorAddressDto: CreateTutorAddressDto,
   ) {
     const addressCount = await this.tutorAddressesService.count(currentUserId)
+    console.log(addressCount === 0)
     // CREATE A NEW ADDRESS
     const tutorAddress = new TutorAddress({
       ...createTutorAddressDto,
