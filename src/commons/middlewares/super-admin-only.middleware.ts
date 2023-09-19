@@ -1,23 +1,21 @@
 import { AdminsService } from '@/app/admins/admins.service'
+import { AdminRole } from '@/app/admins/entities/admin.entity'
 import { JwtPayload } from '@/app/auth/types/jwtPayload.type'
 import {
+  CanActivate,
+  ExecutionContext,
   Injectable,
-  NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common'
-import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify'
 import { decode } from 'jsonwebtoken'
 
 @Injectable()
-export class AdminOnlyMiddleware implements NestMiddleware {
+export class SuperAdminOnlyMiddleware implements CanActivate {
   constructor(private readonly adminService: AdminsService) {}
 
-  async use(
-    req: FastifyRequest,
-    res: FastifyReply,
-    next: HookHandlerDoneFunction,
-  ) {
-    const token = req?.headers.authorization?.replace('Bearer', '').trim()
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    const token = request?.headers.authorization?.replace('Bearer', '').trim()
 
     if (!token) {
       throw new UnauthorizedException(
@@ -36,9 +34,11 @@ export class AdminOnlyMiddleware implements NestMiddleware {
         'Você não tem permissão para acessar este recurso',
       )
     }
-
-    req.user = isAuthAdmin
-
-    next()
+    if (isAuthAdmin.role !== AdminRole.SUPER_ADMIN) {
+      throw new UnauthorizedException(
+        'Você não tem permissão para acessar este recurso',
+      )
+    }
+    return true
   }
 }

@@ -101,16 +101,22 @@ model PetsTransferRequest {
 }
 
 model Admins {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String?
-  cpf       String   @unique
-  email     String   @unique
+  cpf       String    @unique
+  email     String    @unique
   password  String
   phone     String
+  role      Role      @default(ADMIN)
   hashedRt  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 
   @@index([cpf], name: "adminsCpf")
   @@map("admins")
+}
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
 }

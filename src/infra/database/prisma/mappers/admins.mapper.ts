@@ -10,6 +10,7 @@ export class AdminsMapper {
       email: raw.email,
       cpf: raw.cpf,
       phone: raw.phone,
+      role: raw.role,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     }
@@ -23,6 +24,7 @@ export class AdminsMapper {
       password: admin.password,
       cpf: admin.cpf,
       phone: admin.phone,
+      role: admin.role,
       createdAt: admin.createdAt,
       updatedAt: admin.updatedAt,
     }

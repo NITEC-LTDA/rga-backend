@@ -1,5 +1,10 @@
 import { createHash, randomUUID } from 'node:crypto'
 
+export enum AdminRole {
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+}
+
 interface AdminProps {
   id?: string
   name: string
@@ -7,6 +12,7 @@ interface AdminProps {
   password: string
   phone: string
   cpf: string
+  role?: AdminRole
   createdAt?: Date
   updatedAt?: Date
 }
@@ -67,6 +73,14 @@ export class Admin {
 
   public set cpf(cpf: string) {
     this.props.cpf = cpf
+  }
+
+  public get role(): AdminRole {
+    return this.props.role
+  }
+
+  public set role(role: AdminRole) {
+    this.props.role = role
   }
 
   public get createdAt(): Date {
