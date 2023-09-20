@@ -3,12 +3,9 @@ import * as AWS_S3 from '@aws-sdk/client-s3'
 
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Readable } from 'node:stream'
-import { S3RequestPresigner } from '@aws-sdk/s3-request-presigner'
-import { GetObjectCommand } from '@aws-sdk/client-s3'
-import { HttpRequest } from 'aws-sdk'
-import { FastifyRequest } from 'fastify'
+import { StorageService } from '../storage.service'
 @Injectable()
-export class S3StorageService {
+export class S3StorageService implements StorageService {
   private S3: AWS_S3.S3Client
   private readonly BUCKET: string
 
