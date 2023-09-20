@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { TutorsService } from '../tutors/tutors.service'
 import { createHash } from 'node:crypto'
 import { JwtService } from '@nestjs/jwt'
-import { jwtAdminConstants, jwtConstants } from './constants'
+import { jwtConstants } from './constants'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { AdminsService } from '../admins/admins.service'
 
@@ -180,13 +180,13 @@ export class AuthService {
     }
 
     const at = this.jwtService.signAsync(payload, {
-      secret: jwtAdminConstants.atSecret,
+      secret: jwtConstants.atSecret,
       // TODO: change to 15m latter
       expiresIn: '15m',
     })
 
     const rt = this.jwtService.signAsync(payload, {
-      secret: jwtAdminConstants.rtSecret,
+      secret: jwtConstants.rtSecret,
       expiresIn: '30d',
     })
 

@@ -10,6 +10,7 @@ import { AppController } from './app.controller'
 import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_transfer_requests.module'
 import { AdminsModule } from './app/admins/admins.module'
 import { AdminOnlyMiddleware } from './commons/middlewares/admin-only.middleware'
+import { EmailServiceModule } from './infra/services/email/email_service.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AdminOnlyMiddleware } from './commons/middlewares/admin-only.middleware
     PetsModule,
     PetsTransferRequestsModule,
     AdminsModule,
+    EmailServiceModule,
   ],
   controllers: [AppController],
   providers: [

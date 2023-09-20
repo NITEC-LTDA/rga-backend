@@ -11,8 +11,8 @@ export class SesService implements EmailService {
     this.ses = new SES({
       region: 'us-east-1',
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
       },
     })
   }
@@ -20,7 +20,7 @@ export class SesService implements EmailService {
   async sendEmail(
     to: string,
     subject: string,
-    body: string,
+    body: Record<string, any>,
   ): Promise<SES.SendEmailResponse> {
     const params = {
       Destination: {
@@ -30,7 +30,8 @@ export class SesService implements EmailService {
         Body: {
           Html: {
             Charset: 'UTF-8',
-            Data: body,
+            // TODO: Use a template engine to render the body
+            Data: JSON.stringify(body),
           },
         },
         Subject: {
@@ -39,7 +40,7 @@ export class SesService implements EmailService {
         },
       },
       Source: process.env.SOURCE_EMAIL,
-    }
+    } as SES.SendEmailRequest
 
     return this.ses.sendEmail(params).promise()
   }
