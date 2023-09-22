@@ -92,7 +92,8 @@ export class AdminsController {
 
   @UseGuards(SuperAdminOnlyMiddleware)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminsService.remove(id)
+  async remove(@Param('id') id: string) {
+    await this.adminsService.remove(id)
+    return true
   }
 }

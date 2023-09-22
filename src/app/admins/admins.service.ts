@@ -3,6 +3,7 @@ import { CreateAdminDto } from './dto/create-admin.dto'
 import { UpdateAdminDto } from './dto/update-admin.dto'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { Admin } from './entities/admin.entity'
+import { AdminsMapper } from '@/infra/database/prisma/mappers/admins.mapper'
 
 interface IFindAllAdmins {
   page: number
@@ -16,8 +17,10 @@ export class AdminsService {
   async create(createAdminDto: CreateAdminDto) {
     const admin = new Admin(createAdminDto)
 
+    const prismaAdmin = AdminsMapper.toPrisma(admin)
+
     const createdAdmin = await this.prismaService.admins.create({
-      data: admin,
+      data: prismaAdmin,
     })
 
     return createdAdmin
