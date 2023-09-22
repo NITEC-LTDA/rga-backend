@@ -59,12 +59,17 @@ export class AdminsService {
     })
   }
 
-  update(id: number, updateAdminDto: UpdateAdminDto) {
-    return `This action updates a #${id} admin`
+  async update(id: string, updateAdminDto: UpdateAdminDto) {
+    return this.prismaService.admins.update({
+      where: { id },
+      data: updateAdminDto,
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} admin`
+  remove(id: string) {
+    return this.prismaService.admins.delete({
+      where: { id },
+    })
   }
 
   async validateToken(token: string) {

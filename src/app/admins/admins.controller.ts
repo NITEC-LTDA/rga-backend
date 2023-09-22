@@ -76,14 +76,23 @@ export class AdminsController {
     return AdminsMapper.toHttp(admin)
   }
 
+  @UseGuards(SuperAdminOnlyMiddleware)
+  @Patch('/super-admin/:id')
+  updateSuperAdmin(
+    @Param('id') id: string,
+    @Body() updateAdminDto: UpdateAdminDto,
+  ) {
+    return this.adminsService.update(id, updateAdminDto)
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminsService.update(+id, updateAdminDto)
+    return this.adminsService.update(id, updateAdminDto)
   }
 
   @UseGuards(SuperAdminOnlyMiddleware)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.adminsService.remove(+id)
+    return this.adminsService.remove(id)
   }
 }
