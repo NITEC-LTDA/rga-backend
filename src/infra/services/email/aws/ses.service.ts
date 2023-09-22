@@ -20,7 +20,7 @@ export class SesService implements EmailService {
   async sendEmail(
     to: string,
     subject: string,
-    body: Record<string, any>,
+    body: string,
   ): Promise<SES.SendEmailResponse> {
     const params = {
       Destination: {
@@ -31,7 +31,7 @@ export class SesService implements EmailService {
           Html: {
             Charset: 'UTF-8',
             // TODO: Use a template engine to render the body
-            Data: JSON.stringify(body),
+            Data: body,
           },
         },
         Subject: {
