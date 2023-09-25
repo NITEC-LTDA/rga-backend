@@ -22,6 +22,19 @@ export class AuthController {
     return this.authService.signIn(signInDto.cpf, signInDto.password)
   }
 
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('login/admin')
+  signAdminIn(@Body() signInDto: Record<string, string>): Promise<Tokens> {
+    return this.authService.signAdminIn(signInDto.email, signInDto.password)
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout/admin')
+  signAdminOut(@GetCurrentUser('sub') userId: string) {
+    return this.authService.signAdminOut(userId)
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   signOut(@GetCurrentUser('sub') userId: string) {
@@ -37,5 +50,16 @@ export class AuthController {
     @GetCurrentUser('refreshToken') refreshToken: string,
   ): Promise<Tokens> {
     return this.authService.refreshTokens(userId, refreshToken)
+  }
+
+  @Public()
+  @UseGuards(RtGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh/admin')
+  refreshAdminTokens(
+    @GetCurrentUserId() userId: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ): Promise<Tokens> {
+    return this.authService.refreshAdminTokens(userId, refreshToken)
   }
 }

@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
+import { AdminsService } from '../admins/admins.service'
 
 export interface Tokens {
   accessToken: string
@@ -14,6 +15,7 @@ export interface Tokens {
 export class AuthService {
   constructor(
     private readonly tutorsService: TutorsService,
+    private readonly adminsService: AdminsService,
     private readonly prismaService: PrismaService,
     private jwtService: JwtService,
   ) {}
@@ -30,8 +32,29 @@ export class AuthService {
       throw new UnauthorizedException('Senha/CPF inválidos!')
     }
 
-    const [at, rt] = await this.createTokens(tutor)
+    const [at, rt] = await this.createTokens(tutor.id)
     await this.updateRTHash(tutor.id, rt)
+
+    return {
+      accessToken: at,
+      refreshToken: rt,
+    }
+  }
+
+  async signAdminIn(email: string, pass: string): Promise<Tokens> {
+    const admin = await this.adminsService.findByEmail(email)
+
+    if (!admin) {
+      throw new UnauthorizedException('Email não cadastrado ou inválido!')
+    }
+    const hashedPassword = this.hash(pass)
+
+    if (admin.password !== hashedPassword) {
+      throw new UnauthorizedException('Senha/Email inválidos!')
+    }
+
+    const [at, rt] = await this.createAdminTokens(admin.id, admin.role)
+    await this.updateRTHashAdmin(admin.id, rt)
 
     return {
       accessToken: at,
@@ -41,6 +64,21 @@ export class AuthService {
 
   async signOut(userId: string): Promise<boolean> {
     await this.prismaService.tutors.update({
+      where: {
+        id: userId,
+        hashedRt: {
+          not: null,
+        },
+      },
+      data: {
+        hashedRt: null,
+      },
+    })
+    return true
+  }
+
+  async signAdminOut(userId: string): Promise<boolean> {
+    await this.prismaService.admins.update({
       where: {
         id: userId,
         hashedRt: {
@@ -65,8 +103,28 @@ export class AuthService {
       throw new UnauthorizedException()
     }
 
-    const [at, newRt] = await this.createTokens(tutor)
+    const [at, newRt] = await this.createTokens(tutor.id)
     await this.updateRTHash(tutor.id, newRt)
+
+    return {
+      accessToken: at,
+      refreshToken: newRt,
+    }
+  }
+
+  async refreshAdminTokens(adminId: string, rt: string): Promise<Tokens> {
+    const admin = await this.prismaService.admins.findUnique({
+      where: {
+        id: adminId,
+      },
+    })
+
+    if (!admin || admin.hashedRt !== this.hash(rt)) {
+      throw new UnauthorizedException()
+    }
+
+    const [at, newRt] = await this.createAdminTokens(admin.id, admin.role)
+    await this.updateRTHashAdmin(admin.id, newRt)
 
     return {
       accessToken: at,
@@ -85,9 +143,40 @@ export class AuthService {
     })
   }
 
-  private async createTokens(tutor): Promise<string[]> {
+  async updateRTHashAdmin(adminId: string, refreshToken: string) {
+    const hashedRt = this.hash(refreshToken)
+
+    await this.prismaService.admins.update({
+      where: { id: adminId },
+      data: {
+        hashedRt,
+      },
+    })
+  }
+
+  private async createTokens(id: string): Promise<string[]> {
     const payload = {
-      sub: tutor.id,
+      sub: id,
+    }
+
+    const at = this.jwtService.signAsync(payload, {
+      secret: jwtConstants.atSecret,
+      // TODO: change to 15m latter
+      expiresIn: '15m',
+    })
+
+    const rt = this.jwtService.signAsync(payload, {
+      secret: jwtConstants.rtSecret,
+      expiresIn: '30d',
+    })
+
+    return await Promise.all([at, rt])
+  }
+
+  private async createAdminTokens(id: string, role: string): Promise<string[]> {
+    const payload = {
+      sub: id,
+      role,
     }
 
     const at = this.jwtService.signAsync(payload, {
