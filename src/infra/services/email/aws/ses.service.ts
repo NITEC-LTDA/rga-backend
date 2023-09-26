@@ -1,11 +1,13 @@
-import { SES } from 'aws-sdk'
+import * as AWS_SES from '@aws-sdk/client-ses'
 
 import { Injectable } from '@nestjs/common'
 import { EmailService } from '../email.service'
 
+const { SES } = AWS_SES
+
 @Injectable()
 export class SesService implements EmailService {
-  private ses: SES
+  private ses: AWS_SES.SES
 
   constructor() {
     this.ses = new SES({
@@ -21,7 +23,7 @@ export class SesService implements EmailService {
     to: string,
     subject: string,
     body: string,
-  ): Promise<SES.SendEmailResponse> {
+  ): Promise<AWS_SES.SendEmailCommandOutput> {
     const params = {
       Destination: {
         ToAddresses: [to],
@@ -40,9 +42,9 @@ export class SesService implements EmailService {
         },
       },
       Source: process.env.SOURCE_EMAIL,
-    } as SES.SendEmailRequest
+    } as AWS_SES.SendEmailCommandInput
 
-    return this.ses.sendEmail(params).promise()
+    return this.ses.sendEmail(params)
   }
 
   async sendEmailWithAttachment(
@@ -52,7 +54,7 @@ export class SesService implements EmailService {
     attachmentName: string,
     attachment: Buffer,
     attachmentMimeType: string,
-  ): Promise<SES.SendEmailResponse> {
+  ): Promise<AWS_SES.SendEmailCommandOutput> {
     const params = {
       Destination: {
         ToAddresses: [to],
@@ -79,6 +81,6 @@ export class SesService implements EmailService {
       ],
     }
 
-    return this.ses.sendEmail(params).promise()
+    return this.ses.sendEmail(params)
   }
 }
