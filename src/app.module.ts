@@ -11,6 +11,7 @@ import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_tr
 import { AdminsModule } from './app/admins/admins.module'
 import { AdminOnlyMiddleware } from './commons/middlewares/admin-only.middleware'
 import { EmailServiceModule } from './infra/services/email/email_service.module'
+import { ReportsModule } from './app/reports/reports.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EmailServiceModule } from './infra/services/email/email_service.module'
     PetsTransferRequestsModule,
     AdminsModule,
     EmailServiceModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [
