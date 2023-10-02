@@ -1,3 +1,4 @@
+import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 
@@ -12,6 +13,11 @@ interface TutorsReportsFilters {
   city: string
   state: string
   zipcode: string
+}
+
+interface Pagination {
+  page: number
+  limit: number
 }
 
 @Injectable()
@@ -30,92 +36,81 @@ export class ReportsService {
     }
   }
 
-  async petsReport(filters: PetsReportsFilters) {
+  async petsReport(filters: PetsReportsFilters, pagination: Pagination) {
     const { neighborhood, species, breed } = filters
+    const { page, limit } = pagination
 
-    let sql = `
-      SELECT 
-        COUNT(*) as count, 
-        (COUNT(*) * 1.0 / (SELECT COUNT(*) FROM "pets")) * 100 as percentage
-      FROM "pets"
-      JOIN "tutor_addresses" ON "tutor_addresses"."tutor_id" = "pets"."tutorId"
-    `
-    const params = []
-    let whereAdded = false
+    const petsData = await this.prismaService.pets.findMany({
+      where: {
+        AND: [
+          {
+            Tutors: {
+              Tutor_Addresses: {
+                some: {
+                  neighborhood,
+                },
+              },
+            },
+            species,
+            breed,
+          },
+        ],
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    })
 
-    if (neighborhood) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"tutor_addresses"."neighborhood" = $${params.length + 1}`
-      params.push(neighborhood)
-      whereAdded = true
-    }
-    if (species) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"pets"."species" = $${params.length + 1}`
-      params.push(species)
-      whereAdded = true
-    }
-    if (breed) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"pets"."breed" = $${params.length + 1}`
-      params.push(breed)
-      whereAdded = true
-    }
-
-    const petsData = await this.prismaService.$queryRawUnsafe(sql, ...params)
+    const totalPets = await this.prismaService.pets.count()
 
     return {
-      count: Number(petsData[0].count),
-      percentage: Number(petsData[0].percentage),
+      data: {
+        pets: petsData.map((pet) => PetsMapper.toHttp(pet)),
+        percentage: (petsData.length / totalPets) * 100,
+      },
+      meta: {
+        page,
+        limit,
+      },
     }
   }
 
-  async tutorsReport(filters: TutorsReportsFilters) {
+  async tutorsReport(filters: TutorsReportsFilters, pagination: Pagination) {
     const { neighborhood, city, state, zipcode } = filters
+    const { page, limit } = pagination
 
-    let sql = `
-      SELECT 
-        COUNT(*) as count, 
-        (COUNT(*) * 1.0 / (SELECT COUNT(*) FROM "tutors")) * 100 as percentage
-      FROM "tutors"
-      JOIN "tutor_addresses" ON "tutor_addresses"."tutor_id" = "tutors"."id"
-    `
-    const params = []
-    let whereAdded = false
+    const tutorsData = await this.prismaService.tutors.findMany({
+      where: {
+        Tutor_Addresses: {
+          some: {
+            neighborhood,
+            city,
+            state,
+            zipcode,
+          },
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    })
 
-    if (neighborhood) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"tutor_addresses"."neighborhood" = $${params.length + 1}`
-      params.push(neighborhood)
-      whereAdded = true
-    }
-
-    if (city) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"tutor_addresses"."city" = $${params.length + 1}`
-      params.push(city)
-      whereAdded = true
-    }
-
-    if (state) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"tutor_addresses"."state" = $${params.length + 1}`
-      params.push(state)
-      whereAdded = true
-    }
-
-    if (zipcode) {
-      sql += whereAdded ? ' AND ' : ' WHERE '
-      sql += `"tutor_addresses"."zipcode" = $${params.length + 1}`
-      params.push(zipcode)
-      whereAdded = true
-    }
-
-    const tutorsData = await this.prismaService.$queryRawUnsafe(sql, ...params)
+    const totalTutors = await this.prismaService.tutors.count()
 
     return {
-      count: Number(tutorsData[0].count),
-      percentage: Number(tutorsData[0].percentage),
+      data: {
+        tutors: tutorsData.map((tutor) => ({
+          id: tutor.id,
+          name: tutor.name,
+          email: tutor.email,
+          phone: tutor.phone,
+          createdAt: tutor.createdAt,
+          updatedAt: tutor.updatedAt,
+        })),
+        percentage: (tutorsData.length / totalTutors) * 100,
+      },
+      meta: {
+        page,
+        limit,
+      },
     }
   }
 }

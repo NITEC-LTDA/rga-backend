@@ -3,7 +3,7 @@ import { Pets as RawPet, Tutors } from '@prisma/client'
 import { TutorsMapper } from './tutors.mapper'
 
 export class PetsMapper {
-  static toHttp(raw: RawPet & { Tutors?: Tutors }) {
+  static toHttp(raw: RawPet & { Tutors?: Partial<Tutors> }) {
     const pet = {
       id: raw.id,
       name: raw.name,
