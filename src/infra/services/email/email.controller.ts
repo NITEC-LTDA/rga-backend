@@ -45,7 +45,7 @@ export class EmailController {
     const { body } = sendEmailDto
     const emailTemplate = compileTemplate('changePasswordNotification', {
       name: body.name,
-      link: 'http://localhost:3001/health-check',
+      password: body.password,
       appName: process.env.APP_NAME,
     })
     return this.emailService.sendEmail(

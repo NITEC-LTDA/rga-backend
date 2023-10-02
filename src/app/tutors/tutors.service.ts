@@ -28,14 +28,12 @@ export class TutorsService {
     return prismaTutor
   }
 
-  async update(id: string, updateTutorDto: UpdateTutorDto) {
-    const tutor = await this.prismaService.tutors.findUnique({
-      where: { id },
-    })
-    const updatedTutor = { ...tutor, ...updateTutorDto }
+  async update(updateTutorDto: Tutor) {
+    const updatedTutor = TutorsMapper.toPrisma(updateTutorDto)
+    console.log(updatedTutor)
 
     return this.prismaService.tutors.update({
-      where: { id },
+      where: { id: updateTutorDto.id },
       data: updatedTutor,
       include: { Tutor_Addresses: true },
     })
@@ -47,5 +45,11 @@ export class TutorsService {
 
   async findByCpf(cpf: string) {
     return this.prismaService.tutors.findUnique({ where: { cpf } })
+  }
+
+  async findByCpfAndEmail(cpf: string, email: string) {
+    return this.prismaService.tutors.findFirst({
+      where: { cpf, email },
+    })
   }
 }

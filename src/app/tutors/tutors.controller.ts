@@ -14,6 +14,8 @@ import { TutorsMapper } from '@/infra/database/prisma/mappers/tutors.mapper'
 import { AlreadyExistsException } from '../../commons/exceptions/already-exists.exception'
 import { Public } from '@/commons/decorators/public.decorator'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
+import { Tutor } from './entities/tutor.entity'
+import { randomBytes } from 'node:crypto'
 
 @Controller('tutors')
 export class TutorsController {
@@ -70,8 +72,46 @@ export class TutorsController {
       throw new AlreadyExistsException('CPF já em uso')
     }
 
-    const tutor = await this.tutorsService.update(currentUserId, updateTutorDto)
+    const newTutor = new Tutor(
+      {
+        ...tutorExists,
+        ...updateTutorDto,
+      },
+      currentUserId,
+    )
+
+    const tutor = await this.tutorsService.update(newTutor)
 
     return TutorsMapper.toHttp(tutor)
+  }
+
+  @Public()
+  @Post('/me/change-password')
+  @HttpCode(201)
+  async changePassword(@Body() updateTutorDto: UpdateTutorDto) {
+    const tutorExists = await this.tutorsService.findByCpfAndEmail(
+      updateTutorDto.cpf,
+      updateTutorDto.email,
+    )
+
+    if (!tutorExists) {
+      throw new NotFoundException('Tutor não encontrado')
+    }
+
+    const newPassword = randomBytes(4).toString('hex')
+
+    const newTutor = new Tutor(
+      {
+        ...tutorExists,
+        password: newPassword,
+      },
+      tutorExists.id,
+    )
+
+    await this.tutorsService.update(newTutor)
+
+    return {
+      newPassword,
+    }
   }
 }

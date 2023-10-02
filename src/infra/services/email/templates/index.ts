@@ -16,11 +16,8 @@ export const templates = {
   changePasswordNotification: Handlebars.compile(`
     <p>Olá, {{name}}!</p>
     <p>Recebemos uma solicitação para alterar sua senha.</p>
-    <p>Caso não tenha sido você, entre em contato com o suporte.</p>
-    <p>Caso tenha sido você, clique no link abaixo para alterar sua senha:</p>
-    <p>
-      <a href="{{link}}">Alterar senha</a>
-    </p>
+    <p>Sendo assim, sua senha foi alterada para a senha abaixo:</p>
+    <p><strong>{{password}}</strong></p>
     <p>Atenciosamente,</p>
     <p>Equipe do {{appName}}</p>
   `),

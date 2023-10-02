@@ -24,18 +24,6 @@ interface Pagination {
 export class ReportsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async countEntities() {
-    const [tutorsCount, petsCounts] = await Promise.all([
-      this.prismaService.tutors.count(),
-      this.prismaService.pets.count(),
-    ])
-
-    return {
-      tutorsCount,
-      petsCounts,
-    }
-  }
-
   async petsReport(filters: PetsReportsFilters, pagination: Pagination) {
     const { neighborhood, species, breed } = filters
     const { page, limit } = pagination
@@ -65,9 +53,10 @@ export class ReportsService {
     return {
       data: {
         pets: petsData.map((pet) => PetsMapper.toHttp(pet)),
-        percentage: (petsData.length / totalPets) * 100,
       },
       meta: {
+        percentage: (petsData.length / totalPets) * 100,
+        totalPets,
         page,
         limit,
       },
@@ -105,9 +94,10 @@ export class ReportsService {
           createdAt: tutor.createdAt,
           updatedAt: tutor.updatedAt,
         })),
-        percentage: (tutorsData.length / totalTutors) * 100,
       },
       meta: {
+        totalTutors,
+        percentage: (tutorsData.length / totalTutors) * 100,
         page,
         limit,
       },
