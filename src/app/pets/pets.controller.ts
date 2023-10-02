@@ -56,7 +56,7 @@ export class PetsController {
   ) {
     // DELETE PREVIOUS IMAGE
 
-    const pet = await this.petsService.findByRga(rga)
+    const pet = await this.petsService.findWithTutorByRga(rga)
     if (!pet) {
       throw new NotFoundException('Pet not found')
     }
@@ -119,7 +119,7 @@ export class PetsController {
     let pet
 
     if (rga) {
-      pet = await this.petsService.findByRga(rga)
+      pet = await this.petsService.findWithTutorByRga(rga)
     } else if (microchip) {
       pet = await this.petsService.findByMicrochip(microchip)
     } else {

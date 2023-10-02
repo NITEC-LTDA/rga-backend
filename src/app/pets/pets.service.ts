@@ -58,7 +58,7 @@ export class PetsService {
     })
   }
 
-  async findByRga(rga: string) {
+  async findWithTutorByRga(rga: string) {
     return this.prismaService.pets.findUnique({
       where: { rga },
       include: {
@@ -68,6 +68,12 @@ export class PetsService {
           },
         },
       },
+    })
+  }
+
+  async findByRga(rga: string) {
+    return this.prismaService.pets.findFirst({
+      where: { rga },
     })
   }
 
