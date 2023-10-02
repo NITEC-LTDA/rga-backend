@@ -5,7 +5,9 @@ import {
 import { Tutor } from '@/app/tutors/entities/tutor.entity'
 
 export class TutorsMapper {
-  static toHttp(raw: RawTutor & { Tutor_Addresses?: RawTutorAddresses[] }) {
+  static toHttp(
+    raw: Partial<RawTutor> & { Tutor_Addresses?: Partial<RawTutorAddresses[]> },
+  ) {
     if (raw.Tutor_Addresses && raw.Tutor_Addresses.length > 0) {
       return {
         id: raw.id,
