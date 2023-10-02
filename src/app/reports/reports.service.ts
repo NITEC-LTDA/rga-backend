@@ -56,7 +56,7 @@ export class ReportsService {
       },
       meta: {
         percentage: (petsData.length / totalPets) * 100,
-        totalPets,
+        total: totalPets,
         page,
         limit,
       },
@@ -96,7 +96,7 @@ export class ReportsService {
         })),
       },
       meta: {
-        totalTutors,
+        total: totalTutors,
         percentage: (tutorsData.length / totalTutors) * 100,
         page,
         limit,
