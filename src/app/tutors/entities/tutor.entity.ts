@@ -16,12 +16,11 @@ export class Tutor {
   private props: TutorProps
   private _id: string
 
-  constructor(props: TutorProps, id?: string, password?: string) {
+  constructor(props: TutorProps, id?: string) {
     this.props = {
       ...props,
       id: id ?? randomUUID(),
     }
-    this.password = password ?? this.props.password
   }
 
   public get id() {

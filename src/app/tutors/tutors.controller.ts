@@ -15,7 +15,7 @@ import { AlreadyExistsException } from '../../commons/exceptions/already-exists.
 import { Public } from '@/commons/decorators/public.decorator'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { Tutor } from './entities/tutor.entity'
-import { randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
 
 @Controller('tutors')
 export class TutorsController {
@@ -79,6 +79,8 @@ export class TutorsController {
       },
       currentUserId,
     )
+
+    newTutor.password = updateTutorDto.password
 
     const tutor = await this.tutorsService.update(newTutor)
 
