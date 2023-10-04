@@ -106,6 +106,7 @@ export class PetsController {
       pet.rga,
       pet.id,
     )
+
     await this.petsService.update(updatedPet)
 
     return {
