@@ -29,7 +29,7 @@ export class CreatePetDto {
   gender: string
 
   @IsString()
-  @MaxLength(10)
+  @MaxLength(20)
   color: string
 
   @IsOptional()
