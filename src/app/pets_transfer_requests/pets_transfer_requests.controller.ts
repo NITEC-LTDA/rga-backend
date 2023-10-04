@@ -48,14 +48,64 @@ export class PetsTransferRequestsController {
 
   @Get('/sent')
   @HttpCode(200)
-  findAllSent(@GetCurrentUserId() currentUserId: string) {
-    return this.petsTransferRequestsService.findAllSent(currentUserId)
+  async findAllSent(@GetCurrentUserId() currentUserId: string) {
+    const allSent = await this.petsTransferRequestsService.findAllSent(
+      currentUserId,
+    )
+
+    return allSent.map((request) => {
+      return {
+        id: request.id,
+        senderId: request.senderId,
+        receiverId: request.receiverId,
+        petId: request.petId,
+        acceptedAt: request.acceptedAt,
+        canceledAt: request.canceledAt,
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        pet: {
+          id: request.Pets.id,
+          name: request.Pets.name,
+          rga: request.Pets.rga,
+        },
+        receiver: {
+          id: request.receiver.id,
+          name: request.receiver.name,
+          email: request.receiver.email,
+        },
+      }
+    })
   }
 
   @Get('/received')
   @HttpCode(200)
-  findAllReceived(@GetCurrentUserId() currentUserId: string) {
-    return this.petsTransferRequestsService.findAllReceived(currentUserId)
+  async findAllReceived(@GetCurrentUserId() currentUserId: string) {
+    const allReceived = await this.petsTransferRequestsService.findAllReceived(
+      currentUserId,
+    )
+
+    return allReceived.map((request) => {
+      return {
+        id: request.id,
+        senderId: request.senderId,
+        receiverId: request.receiverId,
+        petId: request.petId,
+        acceptedAt: request.acceptedAt,
+        canceledAt: request.canceledAt,
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        pet: {
+          id: request.Pets.id,
+          name: request.Pets.name,
+          rga: request.Pets.rga,
+        },
+        receiver: {
+          id: request.sender.id,
+          name: request.sender.name,
+          email: request.sender.email,
+        },
+      }
+    })
   }
 
   @Patch(':requestId/accept')
@@ -75,11 +125,15 @@ export class PetsTransferRequestsController {
     // Pet transfer logic
     const newTutorialId = isAcceptable.receiverId
     const pet = await this.petsService.findByTutorId(isAcceptable.senderId)
-    const updatedPet = {
-      ...pet,
-      tutorId: newTutorialId,
-    }
-    await this.petsService.update(pet.rga, updatedPet)
+    const updatedPet = new Pet(
+      {
+        ...pet,
+        tutorId: newTutorialId,
+      },
+      pet.tutorId,
+      pet.id,
+    )
+    await this.petsService.update(updatedPet)
 
     return this.petsTransferRequestsService.acceptRequest(requestId)
   }

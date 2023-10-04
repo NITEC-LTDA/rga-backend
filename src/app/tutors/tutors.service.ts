@@ -30,7 +30,6 @@ export class TutorsService {
 
   async update(updateTutorDto: Tutor) {
     const updatedTutor = TutorsMapper.toPrisma(updateTutorDto)
-    console.log(updatedTutor)
 
     return this.prismaService.tutors.update({
       where: { id: updateTutorDto.id },

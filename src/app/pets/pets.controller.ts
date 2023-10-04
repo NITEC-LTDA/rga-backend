@@ -22,6 +22,7 @@ import { S3StorageService } from '@/infra/services/storage/aws/s3.service'
 import { FastifyRequest } from 'fastify'
 import { streamToBuffer } from '../utils'
 import { Public } from '@/commons/decorators/public.decorator'
+import { Pet } from './entities/pet.entity'
 
 @Controller('pets')
 export class PetsController {
@@ -73,8 +74,8 @@ export class PetsController {
     const fileName = `${currentUserId}/${rga}/image/${hashedFileName}`
     const mimeType = data.mimetype
 
-    if (data.filesize > 1_048_576 * 5) {
-      throw new BadRequestException('File size must be less than 5MB')
+    if (data.filesize > 1_048_576 * 10) {
+      throw new BadRequestException('File size must be less than 10MB')
     }
 
     // TODO: upload using stream
@@ -96,8 +97,16 @@ export class PetsController {
     const getObjectUrl = this.storageService.getObjectUrl(fileName)
 
     // UPDATE PET IMAGE URL
-    const updatedPet = { ...pet, imageUrl: getObjectUrl }
-    await this.petsService.update(rga, updatedPet)
+    const updatedPet = new Pet(
+      {
+        ...pet,
+        imageUrl: getObjectUrl,
+      },
+      pet.tutorId,
+      pet.rga,
+      pet.id,
+    )
+    await this.petsService.update(updatedPet)
 
     return {
       message: 'Pet image uploaded successfully',
@@ -143,7 +152,15 @@ export class PetsController {
     if (!pet) {
       throw new NotFoundException('Pet not found')
     }
-    const updatedPet = { ...pet, ...updatePetDto }
-    return this.petsService.update(rga, updatedPet)
+    const updatedPet = new Pet(
+      {
+        ...pet,
+        ...updatePetDto,
+      },
+      pet.tutorId,
+      pet.rga,
+      pet.id,
+    )
+    return this.petsService.update(updatedPet)
   }
 }

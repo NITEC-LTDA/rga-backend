@@ -26,7 +26,7 @@ async function bootstrap() {
   // Register fastify-multipart
   app.register(fastifyMultipart, {
     limits: {
-      fileSize: 1_048_576 * 5, // 5MB
+      fileSize: 1_048_576 * 10, // 10MB
     },
   })
 

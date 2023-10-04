@@ -22,12 +22,60 @@ export class PetsTransferRequestsService {
   findAllSent(senderId: string) {
     return this.prismaService.petsTransferRequest.findMany({
       where: { senderId },
+      select: {
+        id: true,
+        senderId: true,
+        receiverId: true,
+        petId: true,
+        acceptedAt: true,
+        canceledAt: true,
+        createdAt: true,
+        updatedAt: true,
+        Pets: {
+          select: {
+            id: true,
+            name: true,
+            rga: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     })
   }
 
   findAllReceived(receiverId: string) {
     return this.prismaService.petsTransferRequest.findMany({
       where: { receiverId },
+      select: {
+        id: true,
+        senderId: true,
+        receiverId: true,
+        petId: true,
+        acceptedAt: true,
+        canceledAt: true,
+        createdAt: true,
+        updatedAt: true,
+        Pets: {
+          select: {
+            id: true,
+            name: true,
+            rga: true,
+          },
+        },
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     })
   }
 

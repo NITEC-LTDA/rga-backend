@@ -34,9 +34,10 @@ export class PetsService {
     return pets
   }
 
-  update(rga: string, updatedPet: UpdatePetDto) {
+  update(pet: Pet) {
+    const updatedPet = PetsMapper.toPrisma(pet)
     return this.prismaService.pets.update({
-      where: { rga },
+      where: { id: updatedPet.id },
       data: updatedPet,
     })
   }
