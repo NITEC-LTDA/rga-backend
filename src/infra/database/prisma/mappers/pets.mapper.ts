@@ -38,6 +38,7 @@ export class PetsMapper {
       birthDate: pet.birthDate,
       rga: pet.rga,
       microchip: pet.microchip,
+      tutorId: pet.tutorId,
       imageUrl: pet.imageUrl,
       createdAt: pet.createdAt,
       updatedAt: pet.updatedAt,

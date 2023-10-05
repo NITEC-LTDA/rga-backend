@@ -17,7 +17,18 @@ export class PetsService {
 
     return this.prismaService.pets.create({
       data: {
-        ...prismaPet,
+        id: prismaPet.id,
+        name: prismaPet.name,
+        species: prismaPet.species,
+        breed: prismaPet.breed,
+        birthDate: prismaPet.birthDate,
+        rga: prismaPet.rga,
+        microchip: prismaPet.microchip,
+        imageUrl: prismaPet.imageUrl,
+        color: prismaPet.color,
+        gender: prismaPet.gender,
+        createdAt: prismaPet.createdAt,
+        updatedAt: prismaPet.updatedAt,
         Tutors: {
           connect: {
             id: tutorId,

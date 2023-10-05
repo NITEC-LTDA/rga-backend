@@ -122,17 +122,20 @@ export class PetsTransferRequestsController {
       throw new NotFoundException('Solicitação não encontrada')
     }
 
+    console.log(isAcceptable)
+
     // Pet transfer logic
     const newTutorialId = isAcceptable.receiverId
     const pet = await this.petsService.findByTutorId(isAcceptable.senderId)
     const updatedPet = new Pet(
       {
         ...pet,
-        tutorId: newTutorialId,
       },
-      pet.tutorId,
+      newTutorialId,
+      pet.rga,
       pet.id,
     )
+    console.log(updatedPet)
     await this.petsService.update(updatedPet)
 
     return this.petsTransferRequestsService.acceptRequest(requestId)
