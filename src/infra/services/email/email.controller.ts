@@ -31,27 +31,4 @@ export class EmailController {
       emailTemplate,
     )
   }
-
-  /**
-   * Change password request e-mail
-   * @param {SendEmailDto} sendEmailDto - DTO with the email data
-   * @returns {Promise<void>} - Promise with the email data
-   */
-  @Post('/change-password')
-  @HttpCode(201)
-  async sendEmailChangePassword(
-    @Body() sendEmailDto: SendEmailDto,
-  ): Promise<void> {
-    const { body } = sendEmailDto
-    const emailTemplate = compileTemplate('changePasswordNotification', {
-      name: body.name,
-      password: body.password,
-      appName: process.env.APP_NAME,
-    })
-    return this.emailService.sendEmail(
-      sendEmailDto.to,
-      sendEmailDto.subject,
-      emailTemplate,
-    )
-  }
 }

@@ -16,10 +16,15 @@ import { Public } from '@/commons/decorators/public.decorator'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { Tutor } from './entities/tutor.entity'
 import { createHash, randomBytes } from 'node:crypto'
+import { EmailService } from '@/infra/services/email/email.service'
+import { compileTemplate } from '@/infra/services/email/templates'
 
 @Controller('tutors')
 export class TutorsController {
-  constructor(private readonly tutorsService: TutorsService) {}
+  constructor(
+    private readonly tutorsService: TutorsService,
+    private readonly emailService: EmailService,
+  ) {}
 
   @Public()
   @Post()
@@ -110,10 +115,23 @@ export class TutorsController {
       tutorExists.id,
     )
 
+    newTutor.password = newPassword
+
     await this.tutorsService.update(newTutor)
+    const emailTemplate = compileTemplate('changePasswordNotification', {
+      name: newTutor.name,
+      password: newPassword,
+      appName: process.env.APP_NAME,
+    })
+
+    await this.emailService.sendEmail(
+      newTutor.email,
+      'Sua senha foi alterada!',
+      emailTemplate,
+    )
 
     return {
-      newPassword,
+      ok: true,
     }
   }
 }
