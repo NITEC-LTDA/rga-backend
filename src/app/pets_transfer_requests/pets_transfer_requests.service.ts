@@ -46,6 +46,9 @@ export class PetsTransferRequestsService {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
   }
 
@@ -75,6 +78,9 @@ export class PetsTransferRequestsService {
             email: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     })
   }
