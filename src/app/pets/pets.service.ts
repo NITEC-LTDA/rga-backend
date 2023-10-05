@@ -11,7 +11,7 @@ export class PetsService {
   constructor(private prismaService: PrismaService) {}
 
   async create(createPetDto: CreatePetDto, tutorId: string) {
-    const rga = generateRga(9)
+    const rga = generateRga(7)
     const pet = new Pet(createPetDto, tutorId, rga)
     const prismaPet = PetsMapper.toPrisma(pet)
 
