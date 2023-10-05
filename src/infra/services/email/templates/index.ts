@@ -18,6 +18,7 @@ export const templates = {
     <p>Recebemos uma solicitação para alterar sua senha.</p>
     <p>Sendo assim, sua senha foi alterada para a senha abaixo:</p>
     <p><strong>{{password}}</strong></p>
+    <p>Recomendamos que você altere sua senha assim que possível na area "Meus Dados".</p>
     <p>Atenciosamente,</p>
     <p>Equipe do {{appName}}</p>
   `),
