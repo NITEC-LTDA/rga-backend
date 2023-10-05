@@ -10,6 +10,7 @@ interface TutorAddressProps {
   state: string
   country: string
   neighborhood: string
+  complement?: string | null
   createdAt?: Date
   updatedAt?: Date
 }
@@ -91,6 +92,14 @@ export class TutorAddress {
 
   public set neighborhood(neighborhood: string) {
     this.props.neighborhood = neighborhood
+  }
+
+  public get complement(): string | null {
+    return this.props.complement
+  }
+
+  public set complement(complement: string | null) {
+    this.props.complement = complement
   }
 
   public get createdAt(): Date {

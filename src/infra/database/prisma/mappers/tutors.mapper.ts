@@ -25,6 +25,7 @@ export class TutorsMapper {
           state: address.state,
           country: address.country,
           zipCode: address.zipcode,
+          complement: address.complement,
           createdAt: address.createdAt,
           updatedAt: address.updatedAt,
         })),

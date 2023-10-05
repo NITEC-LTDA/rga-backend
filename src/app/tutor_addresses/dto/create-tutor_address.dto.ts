@@ -28,4 +28,8 @@ export class CreateTutorAddressDto {
   @IsString()
   @IsNotEmpty()
   neighborhood: string
+
+  @IsOptional()
+  @IsString()
+  complement: string | null
 }

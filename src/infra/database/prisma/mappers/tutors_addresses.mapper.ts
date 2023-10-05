@@ -13,6 +13,7 @@ export class TutorsAddressesMapper {
       state: raw.state,
       country: raw.country,
       zipCode: raw.zipcode,
+      complement: raw.complement,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     }
@@ -29,6 +30,7 @@ export class TutorsAddressesMapper {
       state: tutorAddress.state,
       country: tutorAddress.country,
       zipcode: tutorAddress.zipcode,
+      complement: tutorAddress.complement,
       createdAt: tutorAddress.createdAt,
       updatedAt: tutorAddress.updatedAt,
     }
