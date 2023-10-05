@@ -10,6 +10,7 @@ export class TutorsService {
 
   async create(createTutorDto: CreateTutorDto) {
     const tutor = new Tutor(createTutorDto)
+    tutor.password = createTutorDto.password
 
     const prismaTutor = TutorsMapper.toPrisma(tutor)
 
