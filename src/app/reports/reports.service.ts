@@ -28,44 +28,47 @@ export class ReportsService {
     const { neighborhood, species, breed } = filters
     const { page, limit } = pagination
 
-    const petsData = await this.prismaService.pets.findMany({
-      where: {
-        AND: [
-          {
-            Tutors: {
-              Tutor_Addresses: {
-                some: {
-                  neighborhood,
-                },
-              },
-            },
-            species,
-            breed,
+    // Create base query object
+    const baseQuery = {
+      Tutors: {
+        Tutor_Addresses: {
+          some: {
+            neighborhood,
           },
-        ],
+        },
       },
+    }
+
+    // Dynamically build where clause based on provided filters
+    const where: any = {
+      AND: [baseQuery],
+    }
+
+    if (species) {
+      where.AND.push({ species })
+    }
+
+    if (breed) {
+      where.AND.push({ breed })
+    }
+
+    // If neighborhood is not specified, remove base query
+    if (!neighborhood) {
+      where.AND.shift()
+    }
+
+    // Simplify further by directly using where condition in findMany and count
+    const petsData = await this.prismaService.pets.findMany({
+      where: neighborhood || species || breed ? where : {},
       skip: (page - 1) * limit,
       take: limit,
     })
 
     const totalPets = await this.prismaService.pets.count()
 
+    // Directly use where condition in count
     const allPetsWithFiltersCount = await this.prismaService.pets.count({
-      where: {
-        AND: [
-          {
-            Tutors: {
-              Tutor_Addresses: {
-                some: {
-                  neighborhood,
-                },
-              },
-            },
-            species,
-            breed,
-          },
-        ],
-      },
+      where: neighborhood || species || breed ? where : {},
     })
 
     return {
@@ -85,17 +88,36 @@ export class ReportsService {
     const { neighborhood, city, state, zipcode } = filters
     const { page, limit } = pagination
 
-    const tutorsData = await this.prismaService.tutors.findMany({
-      where: {
-        Tutor_Addresses: {
-          some: {
-            neighborhood,
-            city,
-            state,
-            zipcode,
-          },
-        },
+    // Dynamically build where clause based on provided filters
+    const where: any = {
+      Tutor_Addresses: {
+        some: {},
       },
+    }
+
+    if (neighborhood) {
+      where.Tutor_Addresses.some.neighborhood = neighborhood
+    }
+
+    if (city) {
+      where.Tutor_Addresses.some.city = city
+    }
+
+    if (state) {
+      where.Tutor_Addresses.some.state = state
+    }
+
+    if (zipcode) {
+      where.Tutor_Addresses.some.zipcode = zipcode
+    }
+
+    // If no filters provided, use an empty where clause
+    const finalWhere = Object.keys(where.Tutor_Addresses.some).length
+      ? where
+      : {}
+
+    const tutorsData = await this.prismaService.tutors.findMany({
+      where: finalWhere,
       skip: (page - 1) * limit,
       take: limit,
     })
@@ -103,16 +125,7 @@ export class ReportsService {
     const totalTutors = await this.prismaService.tutors.count()
 
     const allTutorsWithFiltersCount = await this.prismaService.tutors.count({
-      where: {
-        Tutor_Addresses: {
-          some: {
-            neighborhood,
-            city,
-            state,
-            zipcode,
-          },
-        },
-      },
+      where: finalWhere,
     })
 
     return {
