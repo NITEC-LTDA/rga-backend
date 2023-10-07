@@ -47,13 +47,22 @@ export class AdminsController {
   @UseGuards(SuperAdminOnlyMiddleware)
   @Get()
   @HttpCode(200)
-  async findAll(@Query('page') page: number, @Query('limit') limit: number) {
+  async findAll(
+    @Query('name') name: string,
+    @Query('email') email: string,
+    @Query('cpf') cpf: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
     const parsedPage = page ? Number(page) : 1
     const parsedLimit = limit ? Number(limit) : 10
+
+    const filters = { name, email, cpf }
 
     const pagination = await this.adminsService.findAll({
       page: parsedPage,
       limit: parsedLimit,
+      filters,
     })
 
     return {

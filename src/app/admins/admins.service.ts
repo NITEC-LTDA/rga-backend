@@ -8,6 +8,7 @@ import { AdminsMapper } from '@/infra/database/prisma/mappers/admins.mapper'
 interface IFindAllAdmins {
   page: number
   limit: number
+  filters: any
 }
 
 @Injectable()
@@ -27,14 +28,62 @@ export class AdminsService {
   }
 
   async findAll(params: IFindAllAdmins) {
-    const { page, limit } = params
+    const { page, limit, filters } = params
+
+    const { name, email, cpf } = filters
 
     const admins = await this.prismaService.admins.findMany({
       skip: (page - 1) * limit,
       take: limit,
+
+      where: {
+        AND: [
+          {
+            name: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: email,
+              mode: 'insensitive',
+            },
+          },
+          {
+            cpf: {
+              contains: cpf,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
     })
 
-    const total = await this.prismaService.admins.count()
+    const total = await this.prismaService.admins.count({
+      where: {
+        AND: [
+          {
+            name: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: email,
+              mode: 'insensitive',
+            },
+          },
+          {
+            cpf: {
+              contains: cpf,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+    })
 
     return {
       data: admins,

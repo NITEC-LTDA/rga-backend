@@ -50,12 +50,30 @@ export class ReportsService {
 
     const totalPets = await this.prismaService.pets.count()
 
+    const allPetsWithFiltersCount = await this.prismaService.pets.count({
+      where: {
+        AND: [
+          {
+            Tutors: {
+              Tutor_Addresses: {
+                some: {
+                  neighborhood,
+                },
+              },
+            },
+            species,
+            breed,
+          },
+        ],
+      },
+    })
+
     return {
       data: {
         pets: petsData.map((pet) => PetsMapper.toHttp(pet)),
       },
       meta: {
-        percentage: (petsData.length / totalPets) * 100,
+        percentage: (allPetsWithFiltersCount / totalPets) * 100,
         total: totalPets,
         page,
         limit,
@@ -84,6 +102,19 @@ export class ReportsService {
 
     const totalTutors = await this.prismaService.tutors.count()
 
+    const allTutorsWithFiltersCount = await this.prismaService.tutors.count({
+      where: {
+        Tutor_Addresses: {
+          some: {
+            neighborhood,
+            city,
+            state,
+            zipcode,
+          },
+        },
+      },
+    })
+
     return {
       data: {
         tutors: tutorsData.map((tutor) => ({
@@ -97,7 +128,7 @@ export class ReportsService {
       },
       meta: {
         total: totalTutors,
-        percentage: (tutorsData.length / totalTutors) * 100,
+        percentage: (allTutorsWithFiltersCount / totalTutors) * 100,
         page,
         limit,
       },
