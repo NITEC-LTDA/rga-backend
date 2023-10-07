@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { CreatePetDto } from './dto/create-pet.dto'
-import { UpdatePetDto } from './dto/update-pet.dto'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { Pet } from './entities/pet.entity'
 import { generateRga } from '../utils'
@@ -27,11 +26,18 @@ export class PetsService {
         imageUrl: prismaPet.imageUrl,
         color: prismaPet.color,
         gender: prismaPet.gender,
+        isCastrated: prismaPet.isCastrated,
         createdAt: prismaPet.createdAt,
         updatedAt: prismaPet.updatedAt,
         Tutors: {
           connect: {
             id: tutorId,
+          },
+        },
+
+        Tutor_Addresses: {
+          connect: {
+            id: prismaPet.addressId,
           },
         },
       },
@@ -58,7 +64,7 @@ export class PetsService {
   }
 
   async findByMicrochip(microchip: string) {
-    return this.prismaService.pets.findFirst({
+    const pet = await this.prismaService.pets.findFirst({
       where: { microchip },
       include: {
         Tutors: {
@@ -68,10 +74,26 @@ export class PetsService {
         },
       },
     })
+    // Find the address from the fetched addresses in the application
+    const address =
+      pet.Tutors?.Tutor_Addresses.find((addr) => addr.id === pet.addressId) ||
+      null
+
+    return {
+      ...pet,
+      Tutors: {
+        ...pet.Tutors,
+        Tutor_Addresses: [
+          {
+            ...address,
+          },
+        ],
+      },
+    }
   }
 
   async findWithTutorByRga(rga: string) {
-    return this.prismaService.pets.findUnique({
+    const pet = await this.prismaService.pets.findUnique({
       where: { rga },
       include: {
         Tutors: {
@@ -81,6 +103,22 @@ export class PetsService {
         },
       },
     })
+    // Find the address from the fetched addresses in the application
+    const address =
+      pet.Tutors?.Tutor_Addresses.find((addr) => addr.id === pet.addressId) ||
+      null
+
+    return {
+      ...pet,
+      Tutors: {
+        ...pet.Tutors,
+        Tutor_Addresses: [
+          {
+            ...address,
+          },
+        ],
+      },
+    }
   }
 
   async findByRga(rga: string) {

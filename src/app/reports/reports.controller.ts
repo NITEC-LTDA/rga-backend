@@ -45,4 +45,11 @@ export class ReportsController {
       limit: parsedLimit,
     })
   }
+
+  @Get('/new-tutors-per-month')
+  @HttpCode(200)
+  tutorsPerMonth(@Query('year') year: number) {
+    const parsedYear = year ? Number(year) : new Date().getFullYear()
+    return this.dashboardsService.newTutorsPerMonthReport(parsedYear)
+  }
 }

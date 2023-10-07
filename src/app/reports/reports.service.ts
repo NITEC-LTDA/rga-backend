@@ -147,4 +147,82 @@ export class ReportsService {
       },
     }
   }
+
+  async newTutorsPerMonthReport(year: number) {
+    const tutorsData = await this.prismaService.tutors.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(`${year}-01-01T00:00:00.000Z`),
+          lte: new Date(`${year}-12-31T23:59:59.999Z`),
+        },
+      },
+
+      select: {
+        createdAt: true,
+      },
+
+      orderBy: {
+        createdAt: 'asc',
+      },
+    })
+
+    const tutorsPerMonth = {
+      january: 0,
+      february: 0,
+      march: 0,
+      april: 0,
+      may: 0,
+      june: 0,
+      july: 0,
+      august: 0,
+      september: 0,
+      october: 0,
+      november: 0,
+      december: 0,
+    }
+
+    tutorsData.forEach((tutor) => {
+      const month = tutor.createdAt.getMonth()
+      switch (month) {
+        case 0:
+          tutorsPerMonth.january += 1
+          break
+        case 1:
+          tutorsPerMonth.february += 1
+          break
+        case 2:
+          tutorsPerMonth.march += 1
+          break
+        case 3:
+          tutorsPerMonth.april += 1
+          break
+        case 4:
+          tutorsPerMonth.may += 1
+          break
+        case 5:
+          tutorsPerMonth.june += 1
+          break
+        case 6:
+          tutorsPerMonth.july += 1
+          break
+        case 7:
+          tutorsPerMonth.august += 1
+          break
+        case 8:
+          tutorsPerMonth.september += 1
+          break
+        case 9:
+          tutorsPerMonth.october += 1
+          break
+        case 10:
+          tutorsPerMonth.november += 1
+          break
+        case 11:
+          tutorsPerMonth.december += 1
+          break
+      }
+    })
+
+    return tutorsPerMonth
+  }
 }

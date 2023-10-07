@@ -23,12 +23,14 @@ import { FastifyRequest } from 'fastify'
 import { streamToBuffer } from '../utils'
 import { Public } from '@/commons/decorators/public.decorator'
 import { Pet } from './entities/pet.entity'
+import { TutorsService } from '../tutors/tutors.service'
 
 @Controller('pets')
 export class PetsController {
   constructor(
     private readonly petsService: PetsService,
     private readonly storageService: S3StorageService,
+    private readonly tutorsService: TutorsService,
   ) {}
 
   @Post()
@@ -42,6 +44,13 @@ export class PetsController {
       (await this.petsService.findByMicrochip(createPetDto.microchip))
     ) {
       throw new AlreadyExistsException('Microchip já cadastrado')
+    }
+
+    // this logic will be removed as soon as we FE support creation and list of multiple addresses
+    if (!createPetDto.addressId) {
+      const tutor = await this.tutorsService.findOne(currentUserId)
+
+      createPetDto.addressId = tutor.primaryAddressId
     }
 
     const prismaPet = await this.petsService.create(createPetDto, currentUserId)

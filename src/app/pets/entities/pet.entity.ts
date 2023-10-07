@@ -12,6 +12,8 @@ interface PetsProps {
   microchip?: string
   imageUrl?: string
   tutorId?: string
+  isCastrated?: boolean
+  addressId?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -114,6 +116,22 @@ export class Pet {
 
   public set tutorId(tutorId: string) {
     this.props.tutorId = tutorId
+  }
+
+  public get isCastrated() {
+    return this.props.isCastrated
+  }
+
+  public set isCastrated(isCastrated: boolean) {
+    this.props.isCastrated = isCastrated
+  }
+
+  public get addressId() {
+    return this.props.addressId
+  }
+
+  public set addressId(addressId: string) {
+    this.props.addressId = addressId
   }
 
   public get createdAt() {

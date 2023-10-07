@@ -15,6 +15,8 @@ export class PetsMapper {
       gender: raw.gender,
       microchip: raw.microchip,
       imageUrl: raw.imageUrl,
+      isCastrated: raw.isCastrated,
+      addressId: raw.addressId,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     }
@@ -40,6 +42,8 @@ export class PetsMapper {
       microchip: pet.microchip,
       tutorId: pet.tutorId,
       imageUrl: pet.imageUrl,
+      isCastrated: pet.isCastrated,
+      addressId: pet.addressId,
       createdAt: pet.createdAt,
       updatedAt: pet.updatedAt,
     }

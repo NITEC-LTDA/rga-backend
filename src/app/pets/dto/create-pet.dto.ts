@@ -4,6 +4,7 @@ import {
   MaxLength,
   IsDateString,
   IsOptional,
+  IsBoolean,
 } from 'class-validator'
 
 export class CreatePetDto {
@@ -35,4 +36,12 @@ export class CreatePetDto {
   @IsOptional()
   @IsString()
   microchip: string | null
+
+  @IsBoolean()
+  @IsNotEmpty()
+  isCastrated: boolean
+
+  @IsOptional()
+  @IsString()
+  addressId: string
 }

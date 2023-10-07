@@ -94,9 +94,12 @@ export class AdminsController {
     return this.adminsService.update(id, updateAdminDto)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminsService.update(id, updateAdminDto)
+  @Patch('/me')
+  update(
+    @GetCurrentUserId() currentUserId: string,
+    @Body() updateAdminDto: UpdateAdminDto,
+  ) {
+    return this.adminsService.update(currentUserId, updateAdminDto)
   }
 
   @UseGuards(SuperAdminOnlyMiddleware)
