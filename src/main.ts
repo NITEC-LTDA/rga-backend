@@ -36,7 +36,8 @@ async function bootstrap() {
 
   // enable CORS
   app.register(fastifyCors, {
-    origin: '*',
+    origin: '*', // This allows all origins. For security, list allowed origins explicitly.
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // List of allowed methods
   })
 
   await app.listen(3001, '0.0.0.0', () => {
