@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify'
-import { decode } from 'jsonwebtoken'
+import { decode, verify } from 'jsonwebtoken'
 
 @Injectable()
 export class AdminOnlyMiddleware implements NestMiddleware {
@@ -17,6 +17,12 @@ export class AdminOnlyMiddleware implements NestMiddleware {
     res: FastifyReply,
     next: HookHandlerDoneFunction,
   ) {
+    // Handle OPTIONS request for CORS preflight
+    if (req.method === 'OPTIONS') {
+      next()
+      return
+    }
+
     const token = req?.headers.authorization?.replace('Bearer', '').trim()
 
     if (!token) {
@@ -25,7 +31,13 @@ export class AdminOnlyMiddleware implements NestMiddleware {
       )
     }
 
-    const decodedToken = decode(token) as JwtPayload
+    let decodedToken: JwtPayload
+    try {
+      // Verify the token's signature
+      decodedToken = verify(token, process.env.AT_SECRET) as JwtPayload
+    } catch (err) {
+      throw new UnauthorizedException('Invalid token provided.')
+    }
 
     const adminId = decodedToken?.sub as string
 
