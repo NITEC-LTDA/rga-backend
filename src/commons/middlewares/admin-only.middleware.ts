@@ -18,39 +18,39 @@ export class AdminOnlyMiddleware implements NestMiddleware {
     next: HookHandlerDoneFunction,
   ) {
     // Handle OPTIONS request for CORS preflight
-    if (req.method === 'OPTIONS') {
-      next()
-      return
-    }
+    // if (req.method === 'OPTIONS') {
+    //   next()
+    //   return
+    // }
 
-    const token = req?.headers.authorization?.replace('Bearer', '').trim()
+    // const token = req?.headers.authorization?.replace('Bearer', '').trim()
 
-    if (!token) {
-      throw new UnauthorizedException(
-        'Você não tem permissão para acessar este recurso',
-      )
-    }
+    // if (!token) {
+    //   throw new UnauthorizedException(
+    //     'Você não tem permissão para acessar este recurso',
+    //   )
+    // }
 
-    let decodedToken: JwtPayload
-    try {
-      // Verify the token's signature
-      decodedToken = verify(token, process.env.AT_SECRET) as JwtPayload
-    } catch (err) {
-      throw new UnauthorizedException('Invalid token provided.')
-    }
+    // let decodedToken: JwtPayload
+    // try {
+    //   // Verify the token's signature
+    //   decodedToken = verify(token, process.env.AT_SECRET) as JwtPayload
+    // } catch (err) {
+    //   throw new UnauthorizedException('Invalid token provided.')
+    // }
 
-    const adminId = decodedToken?.sub as string
+    // const adminId = decodedToken?.sub as string
 
-    const isAuthAdmin = await this.adminService.findById(adminId)
+    // const isAuthAdmin = await this.adminService.findById(adminId)
 
-    if (!isAuthAdmin) {
-      throw new UnauthorizedException(
-        'Você não tem permissão para acessar este recurso',
-      )
-    }
+    // if (!isAuthAdmin) {
+    //   throw new UnauthorizedException(
+    //     'Você não tem permissão para acessar este recurso',
+    //   )
+    // }
 
-    req.user = isAuthAdmin
-
+    // req.user = isAuthAdmin
+    return
     next()
   }
 }
