@@ -1,5 +1,6 @@
+import { Role } from '@prisma/client'
 import { IsEmail, IsNotEmpty, IsString, Matches, IsEnum } from 'class-validator'
-import { AdminRole } from '../entities/admin.entity'
+
 const EMAIL_PATTERN = process.env.EMAIL_PATTERN || '@gmail\\.com$'
 
 export class CreateAdminDto {
@@ -26,11 +27,11 @@ export class CreateAdminDto {
   @IsNotEmpty()
   cpf: string
 
-  @IsEnum(AdminRole, {
-    message: `Role must be one of the following: ${Object.values(
-      AdminRole,
-    ).join(', ')}`,
+  @IsEnum(Role, {
+    message: `Role must be one of the following: ${Object.values(Role).join(
+      ', ',
+    )}`,
   })
   @IsNotEmpty()
-  role: AdminRole
+  role: Role
 }

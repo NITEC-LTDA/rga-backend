@@ -1,5 +1,4 @@
 import { AdminsService } from '@/app/admins/admins.service'
-import { AdminRole } from '@/app/admins/entities/admin.entity'
 import { JwtPayload } from '@/app/auth/types/jwtPayload.type'
 import {
   CanActivate,
@@ -7,15 +6,17 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import { decode } from 'jsonwebtoken'
+import { Role } from '@prisma/client'
+import { verify } from 'jsonwebtoken'
 
 @Injectable()
 export class SuperAdminOnlyMiddleware implements CanActivate {
   constructor(private readonly adminService: AdminsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest()
-    const token = request?.headers.authorization?.replace('Bearer', '').trim()
+    const req = context.switchToHttp().getRequest()
+
+    const token = req?.headers.authorization?.replace('Bearer', '').trim()
 
     if (!token) {
       throw new UnauthorizedException(
@@ -23,7 +24,13 @@ export class SuperAdminOnlyMiddleware implements CanActivate {
       )
     }
 
-    const decodedToken = decode(token) as JwtPayload
+    let decodedToken: JwtPayload
+    try {
+      // Verify the token's signature
+      decodedToken = verify(token, process.env.AT_SECRET) as JwtPayload
+    } catch (err) {
+      throw new UnauthorizedException('Invalid token provided.')
+    }
 
     const adminId = decodedToken?.sub as string
 
@@ -34,11 +41,14 @@ export class SuperAdminOnlyMiddleware implements CanActivate {
         'Você não tem permissão para acessar este recurso',
       )
     }
-    if (isAuthAdmin.role !== AdminRole.SUPER_ADMIN) {
+
+    if (isAuthAdmin.role !== Role.SUPER_ADMIN) {
       throw new UnauthorizedException(
         'Você não tem permissão para acessar este recurso',
       )
     }
+
+    req.user = isAuthAdmin
     return true
   }
 }

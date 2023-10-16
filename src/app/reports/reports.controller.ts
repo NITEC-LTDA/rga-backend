@@ -1,9 +1,11 @@
-import { Controller, Get, HttpCode, Query } from '@nestjs/common'
+import { Controller, Get, HttpCode, Query, UseGuards } from '@nestjs/common'
 import { ReportsService } from './reports.service'
+import { AdminOnlyGuard } from '@/commons/middlewares/admin-only.middleware'
 
 @Controller('reports')
 export class ReportsController {
   constructor(private readonly dashboardsService: ReportsService) {}
+  @UseGuards(AdminOnlyGuard)
   @Get('/pets') // /reports/pets
   @HttpCode(200)
   petsReports(
@@ -25,6 +27,7 @@ export class ReportsController {
     })
   }
 
+  @UseGuards(AdminOnlyGuard)
   @Get('/tutors') // /reports/tutors
   @HttpCode(200)
   tutorsReports(
@@ -46,6 +49,7 @@ export class ReportsController {
     })
   }
 
+  @UseGuards(AdminOnlyGuard)
   @Get('/new-tutors-per-month')
   @HttpCode(200)
   tutorsPerMonth(@Query('year') year: number) {

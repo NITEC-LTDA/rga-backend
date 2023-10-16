@@ -17,11 +17,14 @@ import { UpdateAdminDto } from './dto/update-admin.dto'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { AdminsMapper } from '@/infra/database/prisma/mappers/admins.mapper'
 import { SuperAdminOnlyMiddleware } from '@/commons/middlewares/super-admin-only.middleware'
+import { AdminOnlyGuard } from '@/commons/middlewares/admin-only.middleware'
+import { Admin } from './entities/admin.entity'
 
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
+  @UseGuards(AdminOnlyGuard)
   @Post()
   @HttpCode(201)
   async create(@Body() createAdminDto: CreateAdminDto) {
@@ -73,6 +76,7 @@ export class AdminsController {
     }
   }
 
+  @UseGuards(AdminOnlyGuard)
   @Get('/me')
   @HttpCode(200)
   async findMe(@GetCurrentUserId() currentUserId: string) {
@@ -87,19 +91,82 @@ export class AdminsController {
 
   @UseGuards(SuperAdminOnlyMiddleware)
   @Patch('/super-admin/:id')
-  updateSuperAdmin(
+  async updateSuperAdmin(
     @Param('id') id: string,
     @Body() updateAdminDto: UpdateAdminDto,
   ) {
-    return this.adminsService.update(id, updateAdminDto)
+    const adminExists = await this.adminsService.findById(id)
+
+    if (!adminExists) {
+      throw new NotFoundException('Admin não encontrado')
+    }
+
+    if (
+      (await this.adminsService.findByEmail(updateAdminDto.email)) &&
+      updateAdminDto.email !== adminExists.email
+    ) {
+      throw new NotFoundException('Email já cadastrado')
+    }
+
+    if (
+      (await this.adminsService.findByCpf(updateAdminDto.cpf)) &&
+      updateAdminDto.cpf !== adminExists.cpf
+    ) {
+      throw new NotFoundException('CPF já cadastrado')
+    }
+
+    updateAdminDto.role = updateAdminDto.role || adminExists.role
+
+    const newAdmin = new Admin(
+      {
+        ...adminExists,
+        ...updateAdminDto,
+      },
+      id,
+    )
+
+    newAdmin.password = updateAdminDto.password
+
+    return this.adminsService.update(newAdmin)
   }
 
+  @UseGuards(AdminOnlyGuard)
   @Patch('/me')
-  update(
+  async update(
     @GetCurrentUserId() currentUserId: string,
     @Body() updateAdminDto: UpdateAdminDto,
   ) {
-    return this.adminsService.update(currentUserId, updateAdminDto)
+    const adminExists = await this.adminsService.findById(currentUserId)
+
+    if (!adminExists) {
+      throw new NotFoundException('Admin não encontrado')
+    }
+
+    if (
+      (await this.adminsService.findByEmail(updateAdminDto.email)) &&
+      updateAdminDto.email !== adminExists.email
+    ) {
+      throw new NotFoundException('Email já cadastrado')
+    }
+
+    if (
+      (await this.adminsService.findByCpf(updateAdminDto.cpf)) &&
+      updateAdminDto.cpf !== adminExists.cpf
+    ) {
+      throw new NotFoundException('CPF já cadastrado')
+    }
+
+    const newAdmin = new Admin(
+      {
+        ...adminExists,
+        ...updateAdminDto,
+      },
+      currentUserId,
+    )
+
+    newAdmin.password = updateAdminDto.password
+
+    return this.adminsService.update(newAdmin)
   }
 
   @UseGuards(SuperAdminOnlyMiddleware)

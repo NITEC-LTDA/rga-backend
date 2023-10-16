@@ -1,27 +1,19 @@
-import { AdminsService } from '@/app/admins/admins.service'
-import { JwtPayload } from '@/app/auth/types/jwtPayload.type'
 import {
   Injectable,
-  NestMiddleware,
+  CanActivate,
+  ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common'
-import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify'
+import { JwtPayload } from '@/app/auth/types/jwtPayload.type'
 import { verify } from 'jsonwebtoken'
+import { AdminsService } from '@/app/admins/admins.service'
 
 @Injectable()
-export class AdminOnlyMiddleware implements NestMiddleware {
+export class AdminOnlyGuard implements CanActivate {
   constructor(private readonly adminService: AdminsService) {}
 
-  async use(
-    req: FastifyRequest,
-    res: FastifyReply,
-    next: HookHandlerDoneFunction,
-  ) {
-    // Handle OPTIONS request for CORS preflight
-    if (req.method === 'OPTIONS') {
-      next()
-      return
-    }
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req = context.switchToHttp().getRequest()
 
     const token = req?.headers.authorization?.replace('Bearer', '').trim()
 
@@ -50,6 +42,6 @@ export class AdminOnlyMiddleware implements NestMiddleware {
     }
 
     req.user = isAuthAdmin
-    next()
+    return true
   }
 }

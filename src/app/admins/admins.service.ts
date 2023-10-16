@@ -111,10 +111,11 @@ export class AdminsService {
     })
   }
 
-  async update(id: string, updateAdminDto: UpdateAdminDto) {
+  async update(updateAdminDto: Admin) {
+    const updatedAdmin = AdminsMapper.toPrisma(updateAdminDto)
     return this.prismaService.admins.update({
-      where: { id },
-      data: updateAdminDto,
+      where: { id: updateAdminDto.id },
+      data: updatedAdmin,
     })
   }
 

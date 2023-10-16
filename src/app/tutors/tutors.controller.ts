@@ -15,7 +15,7 @@ import { AlreadyExistsException } from '../../commons/exceptions/already-exists.
 import { Public } from '@/commons/decorators/public.decorator'
 import { GetCurrentUserId } from '@/commons/decorators/get-current-user-id.decorator'
 import { Tutor } from './entities/tutor.entity'
-import { createHash, randomBytes } from 'node:crypto'
+import { randomBytes } from 'node:crypto'
 import { EmailService } from '@/infra/services/email/email.service'
 import { compileTemplate } from '@/infra/services/email/templates'
 

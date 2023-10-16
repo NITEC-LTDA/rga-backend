@@ -1,9 +1,5 @@
+import { Role } from '@prisma/client'
 import { createHash, randomUUID } from 'node:crypto'
-
-export enum AdminRole {
-  ADMIN = 'ADMIN',
-  SUPER_ADMIN = 'SUPER_ADMIN',
-}
 
 interface AdminProps {
   id?: string
@@ -12,7 +8,7 @@ interface AdminProps {
   password: string
   phone: string
   cpf: string
-  role?: AdminRole
+  role?: Role
   createdAt?: Date
   updatedAt?: Date
 }
@@ -30,7 +26,7 @@ export class Admin {
   }
 
   public get id() {
-    return this._id
+    return this.id
   }
 
   public get name(): string {
@@ -75,11 +71,11 @@ export class Admin {
     this.props.cpf = cpf
   }
 
-  public get role(): AdminRole {
+  public get role(): Role {
     return this.props.role
   }
 
-  public set role(role: AdminRole) {
+  public set role(role: Role) {
     this.props.role = role
   }
 

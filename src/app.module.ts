@@ -9,7 +9,6 @@ import { PetsModule } from './app/pets/pets.module'
 import { AppController } from './app.controller'
 import { PetsTransferRequestsModule } from './app/pets_transfer_requests/pets_transfer_requests.module'
 import { AdminsModule } from './app/admins/admins.module'
-import { AdminOnlyMiddleware } from './commons/middlewares/admin-only.middleware'
 import { EmailServiceModule } from './infra/services/email/email_service.module'
 import { ReportsModule } from './app/reports/reports.module'
 
@@ -35,8 +34,4 @@ import { ReportsModule } from './app/reports/reports.module'
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AdminOnlyMiddleware).forRoutes('/admins/*')
-  }
-}
+export class AppModule {}
