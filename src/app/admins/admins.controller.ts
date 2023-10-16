@@ -81,7 +81,6 @@ export class AdminsController {
   @HttpCode(200)
   async findMe(@GetCurrentUserId() currentUserId: string) {
     const admin = await this.adminsService.findById(currentUserId)
-
     if (!admin) {
       throw new NotFoundException('Adm não encontrado')
     }

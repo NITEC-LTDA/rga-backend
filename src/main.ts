@@ -8,7 +8,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify'
 import fastifyCors from '@fastify/cors'
-
+import fastifyCookie from 'fastify-cookie'
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -37,8 +37,9 @@ async function bootstrap() {
   // enable CORS
   app.register(fastifyCors, {
     origin: '*', // This allows all origins. For security, list allowed origins explicitly.
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // List of allowed methods
   })
+  // Register the fastify-cookie plugin
+  app.register(fastifyCookie)
 
   await app.listen(3001, '0.0.0.0', () => {
     console.log('Server is running on port 3001')

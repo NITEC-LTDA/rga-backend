@@ -28,16 +28,18 @@ export class ReportsService {
     const { neighborhood, species, breed } = filters
     const { page, limit } = pagination
 
-    // Create base query object
-    const baseQuery = {
-      Tutors: {
-        Tutor_Addresses: {
-          some: {
-            neighborhood,
+    // Base query for neighborhood
+    const baseQuery = neighborhood
+      ? {
+          Tutors: {
+            Tutor_Addresses: {
+              some: {
+                neighborhood,
+              },
+            },
           },
-        },
-      },
-    }
+        }
+      : {}
 
     // Dynamically build where clause based on provided filters
     const where: any = {
@@ -52,31 +54,33 @@ export class ReportsService {
       where.AND.push({ breed })
     }
 
-    // If neighborhood is not specified, remove base query
-    if (!neighborhood) {
-      where.AND.shift()
-    }
+    // If no filters are provided, use an empty where clause
+    const finalWhere = where.AND.length ? where : {}
 
-    // Simplify further by directly using where condition in findMany and count
     const petsData = await this.prismaService.pets.findMany({
-      where: neighborhood || species || breed ? where : {},
+      where: finalWhere,
       skip: (page - 1) * limit,
       take: limit,
+      // Uncomment below if you want to include related data
+      // include: {
+      //     Tutors: true,
+      // },
     })
 
     const totalPets = await this.prismaService.pets.count()
-
-    // Directly use where condition in count
     const allPetsWithFiltersCount = await this.prismaService.pets.count({
-      where: neighborhood || species || breed ? where : {},
+      where: finalWhere,
     })
+
+    const percentage =
+      totalPets !== 0 ? (allPetsWithFiltersCount / totalPets) * 100 : 0
 
     return {
       data: {
         pets: petsData.map((pet) => PetsMapper.toHttp(pet)),
       },
       meta: {
-        percentage: (allPetsWithFiltersCount / totalPets) * 100,
+        percentage,
         total: totalPets,
         page,
         limit,
@@ -120,13 +124,19 @@ export class ReportsService {
       where: finalWhere,
       skip: (page - 1) * limit,
       take: limit,
+      include: {
+        Tutor_Addresses: true, // This will include the address details for each tutor
+      },
     })
 
     const totalTutors = await this.prismaService.tutors.count()
-
     const allTutorsWithFiltersCount = await this.prismaService.tutors.count({
       where: finalWhere,
     })
+
+    // Safely calculate percentage
+    const percentage =
+      totalTutors !== 0 ? (allTutorsWithFiltersCount / totalTutors) * 100 : 0
 
     return {
       data: {
@@ -141,7 +151,7 @@ export class ReportsService {
       },
       meta: {
         total: totalTutors,
-        percentage: (allTutorsWithFiltersCount / totalTutors) * 100,
+        percentage,
         page,
         limit,
       },

@@ -4,7 +4,7 @@ import { AdminOnlyGuard } from '@/commons/middlewares/admin-only.middleware'
 
 @Controller('reports')
 export class ReportsController {
-  constructor(private readonly dashboardsService: ReportsService) {}
+  constructor(private readonly reportsService: ReportsService) {}
   @UseGuards(AdminOnlyGuard)
   @Get('/pets') // /reports/pets
   @HttpCode(200)
@@ -21,7 +21,7 @@ export class ReportsController {
     const parsedLimit = limit ? Number(limit) : 10
 
     const filters = { neighborhood, species, breed }
-    return this.dashboardsService.petsReport(filters, {
+    return this.reportsService.petsReport(filters, {
       page: parsedPage,
       limit: parsedLimit,
     })
@@ -43,7 +43,7 @@ export class ReportsController {
     const filters = { neighborhood, state, city, zipcode }
     const parsedPage = page ? Number(page) : 1
     const parsedLimit = limit ? Number(limit) : 10
-    return this.dashboardsService.tutorsReport(filters, {
+    return this.reportsService.tutorsReport(filters, {
       page: parsedPage,
       limit: parsedLimit,
     })
@@ -54,6 +54,6 @@ export class ReportsController {
   @HttpCode(200)
   tutorsPerMonth(@Query('year') year: number) {
     const parsedYear = year ? Number(year) : new Date().getFullYear()
-    return this.dashboardsService.newTutorsPerMonthReport(parsedYear)
+    return this.reportsService.newTutorsPerMonthReport(parsedYear)
   }
 }

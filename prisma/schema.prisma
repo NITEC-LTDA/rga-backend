@@ -51,6 +51,10 @@ model Tutor_Addresses {
   Pets         Pets[]
 
   @@index([tutor_id], name: "tutor_id")
+  @@index([zipcode], name: "zipcode")
+  @@index([neighborhood], name: "neighborhood")
+  @@index([city], name: "city")
+  @@index([state], name: "state")
   @@map("tutor_addresses")
 }
 

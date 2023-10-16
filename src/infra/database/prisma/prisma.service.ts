@@ -8,7 +8,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     super(
       connectionUrl
         ? {
-            datasources: { db: { url: connectionUrl } },
+            datasources: {
+              db: { url: connectionUrl + '&connection_limit=100' },
+            },
             ...(process.env.NODE_ENV === 'dev'
               ? { log: ['query', 'info', 'warn'] }
               : {}),
