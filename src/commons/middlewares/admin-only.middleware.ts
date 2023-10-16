@@ -41,7 +41,12 @@ export class AdminOnlyGuard implements CanActivate {
       )
     }
 
-    req.user = isAuthAdmin
+    req.user = {
+      sub: isAuthAdmin.id,
+      role: isAuthAdmin.role,
+      exp: decodedToken.exp,
+      iat: decodedToken.iat,
+    }
     return true
   }
 }
