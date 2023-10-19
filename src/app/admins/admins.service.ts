@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { CreateAdminDto } from './dto/create-admin.dto'
-import { UpdateAdminDto } from './dto/update-admin.dto'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { Admin } from './entities/admin.entity'
 import { AdminsMapper } from '@/infra/database/prisma/mappers/admins.mapper'

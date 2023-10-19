@@ -4,7 +4,7 @@ import { CacheModule } from '@nestjs/cache-manager'
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 5 * 60, // seconds (5 minutes)
+      ttl: 3 * 60, // seconds (5 minutes)
       max: 100,
     }),
   ],

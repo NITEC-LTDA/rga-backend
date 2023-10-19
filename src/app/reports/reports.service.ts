@@ -1,7 +1,8 @@
 import { PetsMapper } from '@/infra/database/prisma/mappers/pets.mapper'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
-import { Injectable } from '@nestjs/common'
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
 interface PetsReportsFilters {
   neighborhood: string
   species: string
@@ -22,11 +23,52 @@ interface Pagination {
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   async petsReport(filters: PetsReportsFilters, pagination: Pagination) {
     const { neighborhood, species, breed } = filters
     const { page, limit } = pagination
+
+    /**
+     * TODO: This may change to Elasticsearch in the future
+     *
+     * Added cache to base scenario (no filters provided)
+     */
+    if (!neighborhood && !species && !breed) {
+      const cachedPetsReport = await this.cacheManager.get('petsReport')
+
+      if (cachedPetsReport) {
+        return cachedPetsReport
+      }
+
+      const petsData = await this.prismaService.pets.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+      })
+
+      const totalPets = await this.prismaService.pets.count()
+
+      const percentage = 100
+
+      const data = {
+        data: {
+          pets: petsData.map((pet) => PetsMapper.toHttp(pet)),
+        },
+        meta: {
+          percentage,
+          total: totalPets,
+          page,
+          limit,
+        },
+      }
+
+      await this.cacheManager.set('petsReport', data, 300) // cache for 5 minutes
+
+      return data
+    }
 
     // Base query for neighborhood
     const baseQuery = neighborhood
@@ -61,10 +103,6 @@ export class ReportsService {
       where: finalWhere,
       skip: (page - 1) * limit,
       take: limit,
-      // Uncomment below if you want to include related data
-      // include: {
-      //     Tutors: true,
-      // },
     })
 
     const totalPets = await this.prismaService.pets.count()
@@ -91,6 +129,54 @@ export class ReportsService {
   async tutorsReport(filters: TutorsReportsFilters, pagination: Pagination) {
     const { neighborhood, city, state, zipcode } = filters
     const { page, limit } = pagination
+
+    /**
+     * TODO: This may change to Elasticsearch in the future
+     *
+     * Added cache to base scenario (no filters provided)
+     */
+    if (!neighborhood && !city && !state && !zipcode) {
+      const cachedTutors = await this.cacheManager.get('tutors')
+
+      if (cachedTutors) {
+        return cachedTutors
+      }
+
+      const tutorsData = await this.prismaService.tutors.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          Tutor_Addresses: true, // This will include the address details for each tutor
+        },
+      })
+
+      const totalTutors = await this.prismaService.tutors.count()
+
+      const percentage = 100
+
+      const data = {
+        data: {
+          tutors: tutorsData.map((tutor) => ({
+            id: tutor.id,
+            name: tutor.name,
+            email: tutor.email,
+            phone: tutor.phone,
+            createdAt: tutor.createdAt,
+            updatedAt: tutor.updatedAt,
+          })),
+        },
+        meta: {
+          percentage,
+          total: totalTutors,
+          page,
+          limit,
+        },
+      }
+
+      await this.cacheManager.set('tutors', data, 300) // cache for 5 minutes
+
+      return data
+    }
 
     // Dynamically build where clause based on provided filters
     const where: any = {
