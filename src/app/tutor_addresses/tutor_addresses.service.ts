@@ -27,12 +27,21 @@ export class TutorAddressesService {
     })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tutorAddress`
+  findOne(id: string) {
+    return this.prismaService.tutor_Addresses.findUnique({
+      where: {
+        id,
+      },
+    })
   }
 
-  update(id: number, updateTutorAddressDto: UpdateTutorAddressDto) {
-    return `This action updates a #${id} tutorAddress`
+  update(updatedAddress: TutorAddress) {
+    return this.prismaService.tutor_Addresses.update({
+      where: {
+        id: updatedAddress.id,
+      },
+      data: TutorsAddressesMapper.toPrisma(updatedAddress),
+    })
   }
 
   remove(id: number) {

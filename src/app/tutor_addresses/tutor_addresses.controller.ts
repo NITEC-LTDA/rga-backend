@@ -5,8 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   HttpCode,
+  NotFoundException,
 } from '@nestjs/common'
 import { TutorAddressesService } from './tutor_addresses.service'
 import { CreateTutorAddressDto } from './dto/create-tutor_address.dto'
@@ -60,21 +60,26 @@ export class TutorAddressesController {
     return this.tutorAddressesService.findAll(currentUserId)
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tutorAddressesService.findOne(+id)
-  }
-
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateTutorAddressDto: UpdateTutorAddressDto,
   ) {
-    return this.tutorAddressesService.update(+id, updateTutorAddressDto)
-  }
+    const addressExists = await this.tutorAddressesService.findOne(id)
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tutorAddressesService.remove(+id)
+    if (!addressExists) {
+      throw new NotFoundException('Address not found')
+    }
+
+    const updatedAddress = new TutorAddress(
+      {
+        ...addressExists,
+        ...updateTutorAddressDto,
+        tutorId: addressExists.tutor_id,
+      },
+      addressExists.id,
+    )
+
+    return this.tutorAddressesService.update(updatedAddress)
   }
 }
