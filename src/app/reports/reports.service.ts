@@ -321,4 +321,41 @@ export class ReportsService {
 
     return tutorsPerMonth
   }
+
+  async speciesPizzaChartReport() {
+    // Get the counts of each species
+    const speciesCounts = await this.prismaService.pets.groupBy({
+      by: ['species'],
+      _count: {
+        species: true,
+      },
+      orderBy: {
+        _count: {
+          species: 'desc',
+        },
+      },
+    })
+
+    // Keep the top 4 species and map them to the desired format
+    const topSpecies = speciesCounts.slice(0, 4).map((species) => ({
+      name: species.species,
+      value: species._count.species,
+    }))
+
+    // Sum the counts of all other species
+    const othersCount = speciesCounts
+      .slice(4)
+      .reduce((sum, species) => sum + species._count.species, 0)
+
+    // Create the "others" category if there are any and map to the desired format
+    const others =
+      othersCount > 0 ? [{ name: 'Others', value: othersCount }] : []
+
+    // Combine the top species with "others"
+    const report = topSpecies.concat(others)
+
+    return {
+      data: report,
+    }
+  }
 }

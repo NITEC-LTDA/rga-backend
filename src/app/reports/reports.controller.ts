@@ -56,4 +56,11 @@ export class ReportsController {
     const parsedYear = year ? Number(year) : new Date().getFullYear()
     return this.reportsService.newTutorsPerMonthReport(parsedYear)
   }
+
+  @UseGuards(AdminOnlyGuard)
+  @Get('/species-pizza-chart')
+  @HttpCode(200)
+  speciesPizzaChart() {
+    return this.reportsService.speciesPizzaChartReport()
+  }
 }
