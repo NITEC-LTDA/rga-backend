@@ -365,6 +365,11 @@ export class ReportsService {
       include: {
         Tutor_Addresses: true, // Include related addresses
       },
+      where: {
+        addressId: {
+          not: null,
+        },
+      },
     })
 
     // Manually group and count pets by neighborhood
