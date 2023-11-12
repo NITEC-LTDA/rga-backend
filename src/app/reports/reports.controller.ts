@@ -63,4 +63,11 @@ export class ReportsController {
   speciesPizzaChart() {
     return this.reportsService.speciesPizzaChartReport()
   }
+
+  @UseGuards(AdminOnlyGuard)
+  @Get('/pets-per-neighborhood-pizza-chart')
+  @HttpCode(200)
+  petsAmountPerNeighborhoodPizzaChartReport() {
+    return this.reportsService.petsAmountPerNeighborhoodPizzaChartReport()
+  }
 }

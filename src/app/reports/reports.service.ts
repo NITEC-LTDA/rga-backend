@@ -358,4 +358,46 @@ export class ReportsService {
       data: report,
     }
   }
+
+  async petsAmountPerNeighborhoodPizzaChartReport() {
+    // Fetch pets with their related addresses
+    const petsWithAddresses = await this.prismaService.pets.findMany({
+      include: {
+        Tutor_Addresses: true, // Include related addresses
+      },
+    })
+
+    // Manually group and count pets by neighborhood
+    const neighborhoodCounts = petsWithAddresses.reduce((acc, pet) => {
+      const neighborhood = pet.Tutor_Addresses?.neighborhood
+      if (neighborhood) {
+        acc[neighborhood] = (acc[neighborhood] || 0) + 1
+      }
+      return acc
+    }, {})
+
+    // Convert to array and sort by count
+    const sortedNeighborhoods = Object.entries(neighborhoodCounts)
+      .map(([name, value]) => ({ name, value: value as number })) // Explicitly cast value to number
+      .sort((a, b) => b.value - a.value)
+
+    // Keep the top 4 neighborhoods
+    const topNeighborhoods = sortedNeighborhoods.slice(0, 4)
+
+    // Sum the counts of all other neighborhoods
+    const othersCount = sortedNeighborhoods
+      .slice(4)
+      .reduce((sum, neighborhood) => sum + neighborhood.value, 0)
+
+    // Create the "others" category if there are any
+    const others =
+      othersCount > 0 ? [{ name: 'Others', value: othersCount }] : []
+
+    // Combine the top neighborhoods with "others"
+    const report = topNeighborhoods.concat(others)
+
+    return {
+      data: report,
+    }
+  }
 }
