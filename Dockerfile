@@ -48,17 +48,9 @@ COPY --from=build /usr/src/app/startProduction.sh ./startProduction.sh
 COPY --from=development /usr/src/app/package*.json ./
 COPY --from=development /usr/src/app/tsconfig*.json ./
 
-# Ensure the startProduction.sh script is executable
-RUN chmod +x startProduction.sh
-
-# Debugging steps: List directory contents
-RUN ls -la /usr/src/app
-
 # Set environment variable for production
 ENV NODE_ENV production
 
 # Expose port
 EXPOSE 3001
 
-# Run the startProduction.sh script
-CMD ["sh", "./startProduction.sh"]
