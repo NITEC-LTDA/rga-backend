@@ -5,9 +5,11 @@ FROM node:18-alpine AS development
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY . .
-
+COPY package*.json ./
 RUN npm install
+
+# Copy all files to the working directory
+COPY . .
 
 # Build stage
 FROM node:18-alpine AS build
@@ -46,14 +48,14 @@ COPY --from=build /usr/src/app/startProduction.sh ./startProduction.sh
 COPY --from=development /usr/src/app/package*.json ./
 COPY --from=development /usr/src/app/tsconfig*.json ./
 
+# Ensure the startProduction.sh script is executable
+RUN chmod +x startProduction.sh
+
 # Set environment variable for production
 ENV NODE_ENV production
 
 # Expose port
 EXPOSE 3001
 
-RUN chmod -x startProduction.sh
-RUN chown root:root startProduction.sh
-
 # run sh with permissions
-CMD ["sh", "startProduction.sh"]
+CMD ["sh", "./startProduction.sh"]
