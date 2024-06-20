@@ -15,7 +15,8 @@ COPY . .
 RUN npx prisma generate && npm run build
 
 # List the contents of the dist directory to verify build output
-RUN ls -la /usr/src/app/dist/src/
+RUN ls -la /usr/src/app/dist
+RUN ls -la /usr/src/app/dist/src
 
 # Final stage for production
 FROM node:18-alpine AS production
@@ -31,7 +32,8 @@ COPY --from=build /usr/src/app/package*.json /usr/src/app/
 COPY --from=build /usr/src/app/tsconfig*.json /usr/src/app/
 
 # List the contents of the dist directory to verify copy
-RUN ls -la /usr/src/app/dist/src/
+RUN ls -la /usr/src/app/dist
+RUN ls -la /usr/src/app/dist/src
 
 # Set environment variable for production
 ENV NODE_ENV production
