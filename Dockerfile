@@ -40,4 +40,4 @@ ENV NODE_ENV production
 EXPOSE 3001
 
 # Start the application
-CMD ["npm", "run start:prod"]
+CMD ["npm run start:prod"]
