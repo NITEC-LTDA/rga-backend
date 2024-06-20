@@ -14,8 +14,8 @@ COPY . .
 # Generate Prisma client and run build command
 RUN npx prisma generate && npm run build
 
-# Remove dev dependencies
-RUN npm install --only=production && npm cache clean --force
+# List the contents of the dist directory to verify build output
+RUN ls -la /usr/src/app/dist/src/
 
 # Final stage for production
 FROM node:18-alpine AS production
@@ -25,6 +25,9 @@ WORKDIR /usr/src/app
 
 # Copy necessary files from the build stage
 COPY --from=build /usr/src/app .
+
+# List the contents of the dist directory to verify copy
+RUN ls -la /usr/src/app/dist/src/
 
 # Set environment variable for production
 ENV NODE_ENV production
