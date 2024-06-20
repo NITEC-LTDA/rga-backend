@@ -53,4 +53,4 @@ ENV NODE_ENV production
 EXPOSE 3001
 
 # Start the application
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "node dist/src/main.js"]
