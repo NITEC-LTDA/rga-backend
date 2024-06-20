@@ -24,7 +24,11 @@ FROM node:18-alpine AS production
 WORKDIR /usr/src/app
 
 # Copy necessary files from the build stage
-COPY --from=build /usr/src/app .
+COPY --from=build /usr/src/app/dist /usr/src/app/dist
+COPY --from=build /usr/src/app/node_modules /usr/src/app/node_modules
+COPY --from=build /usr/src/app/prisma /usr/src/app/prisma
+COPY --from=build /usr/src/app/package*.json /usr/src/app/
+COPY --from=build /usr/src/app/tsconfig*.json /usr/src/app/
 
 # List the contents of the dist directory to verify copy
 RUN ls -la /usr/src/app/dist/src/
