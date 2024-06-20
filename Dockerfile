@@ -21,7 +21,6 @@ WORKDIR /usr/src/app
 COPY --from=development /usr/src/app/package*.json ./
 COPY --from=development /usr/src/app/tsconfig*.json ./
 COPY --from=development /usr/src/app/src ./src
-COPY --from=development /usr/src/app/startProduction.sh ./
 COPY --from=development /usr/src/app/prisma ./prisma
 
 # Install dependencies and generate Prisma client
@@ -44,7 +43,6 @@ WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist/src/
 COPY --from=build /usr/src/app/prisma ./prisma
-COPY --from=build /usr/src/app/startProduction.sh ./startProduction.sh
 COPY --from=development /usr/src/app/package*.json ./
 COPY --from=development /usr/src/app/tsconfig*.json ./
 
@@ -54,3 +52,5 @@ ENV NODE_ENV production
 # Expose port
 EXPOSE 3001
 
+# Start the application
+CMD ["node", "dist/src/index.js"]
