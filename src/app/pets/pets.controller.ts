@@ -31,7 +31,7 @@ export class PetsController {
     private readonly petsService: PetsService,
     private readonly storageService: S3StorageService,
     private readonly tutorsService: TutorsService,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(201)
@@ -83,9 +83,6 @@ export class PetsController {
     const fileName = `${currentUserId}/${rga}/image/${hashedFileName}`
     const mimeType = data.mimetype
 
-    if (data.filesize > 1_048_576 * 10) {
-      throw new BadRequestException('File size must be less than 10MB')
-    }
 
     // TODO: upload using stream
     /**

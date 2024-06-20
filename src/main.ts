@@ -1,4 +1,4 @@
-import fastifyMultipart from 'fastify-multipart'
+import fastifyMultipart from '@fastify/multipart'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'

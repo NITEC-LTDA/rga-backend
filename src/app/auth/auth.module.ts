@@ -12,4 +12,4 @@ import { AdminsModule } from '../admins/admins.module'
   providers: [AuthService, AtStrategy, RtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule { }
