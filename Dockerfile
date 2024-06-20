@@ -1,5 +1,5 @@
 # Use a specific version for reproducibility
-FROM node:18-alpine AS development
+FROM node:18-alpine AS build
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -11,24 +11,8 @@ RUN npm install
 # Copy all files to the working directory
 COPY . .
 
-# Build stage
-FROM node:18-alpine AS build
-
-# Create app directory
-WORKDIR /usr/src/app
-
-# Copy necessary files for build
-COPY --from=development /usr/src/app/package*.json ./
-COPY --from=development /usr/src/app/tsconfig*.json ./
-COPY --from=development /usr/src/app/src ./src
-COPY --from=development /usr/src/app/prisma ./prisma
-
-# Install dependencies and generate Prisma client
-RUN npm install
-RUN npx prisma generate
-
-# Run build command to create the production bundle
-RUN npm run build
+# Generate Prisma client and run build command
+RUN npx prisma generate && npm run build
 
 # Remove dev dependencies
 RUN npm install --only=production && npm cache clean --force
@@ -39,12 +23,8 @@ FROM node:18-alpine AS production
 # Set Working directory for the final stage
 WORKDIR /usr/src/app
 
-# Copy necessary files from previous stages
-COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist/src/
-COPY --from=build /usr/src/app/prisma ./prisma
-COPY --from=development /usr/src/app/package*.json ./
-COPY --from=development /usr/src/app/tsconfig*.json ./
+# Copy necessary files from the build stage
+COPY --from=build /usr/src/app .
 
 # Set environment variable for production
 ENV NODE_ENV production
