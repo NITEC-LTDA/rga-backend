@@ -34,7 +34,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
-    "@nestjs/platform-fastify": "^10.2.4",
+    "@nestjs/platform-fastify": "^11.0.0",
     "@prisma/client": "^5.1.1",
     "aws-sdk": "^2.1454.0",
     "cache-manager": "^5.2.4",
